@@ -1,0 +1,169 @@
+// COLORES
+Primario = #fe1d37
+Secundario = #366CFB
+negro = #151515
+// ESTILOS
+html
+	width 100%
+	height 100%
+body
+	font-family 'Oswald' sans-serif
+	background-color #EFEFEF
+body.home
+	width 100%
+	height 100%
+	background-image url("../img/patron.png"),url("../img/fondo-quiniela.jpg")
+	background-size 4px 4px, cover
+	background-repeat repeat, no-repeat
+	background-position center center, center top
+	font-weight 300
+	background-color negro
+	&.home
+		color white
+img
+	max-width 100%
+	height auto	
+
+// MODULOS
+.lightbox
+	max-width 100%
+	color black
+	margin auto auto
+	position fixed
+	top 0
+	left 0
+	right 0
+	bottom 0
+	display none
+	text-align center
+	color #555
+.lightbox--activo
+	display block
+.lightbox__fondo
+	background-color black
+	background-color rgba(black, .7)
+	position fixed
+	height 100%
+	width 100%
+	z-index 1
+.lightbox__contenedor
+	max-width 500px
+	max-height 80%
+	padding .5em
+	box-sizing border-box
+	overflow hidden
+	margin auto
+	position absolute
+	top 0
+	left 0
+	right 0
+	bottom 0
+	z-index 2
+#registro .lightbox__contenedor
+	max-height 620px
+#iniciarSesion .lightbox__contenedor
+	max-height 430px
+.lightbox__titulo
+	background-color Primario
+	font-weight 400
+	font-style italic
+	text-align center
+	display block
+	color white
+	padding .25em 0
+	font-size 1.5em
+	margin 0
+	position absolute
+	z-index 1
+	left .5em
+	right .5em
+.lightbox__contenido
+	padding 0 1em 2em
+	margin-top 3.75em
+	position absolute
+	box-sizing border-box
+	background-color white
+	overflow-y auto
+	right .75em
+	left .75em
+	bottom 1em
+	top 1em
+.boton
+	display block
+	text-decoration none
+	padding .25em .5em
+	margin 1em
+	font-size 1.25em
+	box-sizing border-box
+	font-style italic
+	transition all .3s ease-in-out
+	text-align center
+	cursor pointer
+	box-shadow 0 .1em .1em rgba(black,.3)
+	&:hover
+		box-shadow 0 .3em .5em rgba(black,.5)
+	&.Disable:hover
+		box-shadow 0 .1em .1em rgba(black,.3)
+	&.boton--general
+		background-color Primario
+		color white
+		&:hover
+			background-color lighten(Primario, 20%)
+	&.boton--secundario
+		background-color Secundario
+		color white
+		&:hover
+			background-color lighten(Secundario, 20%)
+			
+		
+.wrapperHome
+	center(980px, 1em)
+	text-align center
+	margin-top 10vh
+	#lines
+		cf()
+		stack()
+		margin-top 5em
+	figure
+		column(2/4)
+		shift(1/4)
+		cf()
+		@media(max-width:720px)
+			column(3/4)
+			shift(.5/4)
+			cf()
+	p
+		column(3/4)
+		shift(.5/4)
+		font-size 1.75em
+		font-style italic
+		color #ccc
+		cf()
+		@media(max-width:720px)
+			font-size 1.25em
+	.navigationHome
+		column(2/4)
+		shift(1/4)
+		cf()
+		margin 0 0 2em
+		a
+			column(1/2,  cycle = 0)
+			@media(max-width: 600px)
+				stack()
+.separador
+	stack()
+	cf()
+	border 1px solid #ccc
+	height 0
+	line-height 0
+	display inline-block
+	vertical-align center
+	h5
+		margin-top -1.5em
+		background-color white
+		display inline-block
+		line-height 1em
+		padding .5rem
+		box-shadow 0 0 .5em white
+		color #555
+		

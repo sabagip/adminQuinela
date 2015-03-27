@@ -1,0 +1,65 @@
+/*
+Error: $color: 'color(#fe1d37, "lighten-2")' is not a color for `lighten'
+        on line 3 of /Applications/XAMPP/xamppfiles/htdocs/QUINIELA/QUINIELA FINAL/vendors/materialize-src/sass/components/_variables.scss
+        from line 9 of /Applications/XAMPP/xamppfiles/htdocs/QUINIELA/QUINIELA FINAL/vendors/materialize-src/sass/materialize.scss
+
+1: @charset "UTF-8";
+2: 
+3: // Mixins
+4: @import "components/prefixer";
+5: @import "components/mixins";
+6: //@import "components/color";
+7: 
+8: // Variables;
+
+Backtrace:
+/Applications/XAMPP/xamppfiles/htdocs/QUINIELA/QUINIELA FINAL/vendors/materialize-src/sass/components/_variables.scss:3
+/Applications/XAMPP/xamppfiles/htdocs/QUINIELA/QUINIELA FINAL/vendors/materialize-src/sass/materialize.scss:9
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/script/tree/funcall.rb:303:in `reformat_argument_error'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/script/tree/funcall.rb:146:in `rescue in _perform'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/script/tree/funcall.rb:123:in `_perform'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/script/tree/node.rb:50:in `perform'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:468:in `visit_variable'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/base.rb:36:in `visit'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:158:in `block in visit'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/stack.rb:79:in `block in with_base'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/stack.rb:115:in `with_frame'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/stack.rb:79:in `with_base'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:158:in `visit'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:325:in `block (2 levels) in visit_import'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:325:in `map'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:325:in `block in visit_import'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/stack.rb:88:in `block in with_import'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/stack.rb:115:in `with_frame'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/stack.rb:88:in `with_import'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:322:in `visit_import'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/base.rb:36:in `visit'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:158:in `block in visit'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/stack.rb:79:in `block in with_base'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/stack.rb:115:in `with_frame'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/stack.rb:79:in `with_base'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:158:in `visit'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/base.rb:52:in `block in visit_children'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/base.rb:52:in `map'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/base.rb:52:in `visit_children'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:167:in `block in visit_children'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:179:in `with_environment'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:166:in `visit_children'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/base.rb:36:in `block in visit'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:186:in `visit_root'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/base.rb:36:in `visit'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:157:in `visit'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/visitors/perform.rb:8:in `visit'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/root_node.rb:36:in `css_tree'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/tree/root_node.rb:20:in `render'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/engine.rb:268:in `render'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/exec/sass_scss.rb:404:in `run'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/exec/sass_scss.rb:62:in `process_result'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/exec/base.rb:52:in `parse'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/lib/sass/exec/base.rb:19:in `parse!'
+/Applications/CodeKit.app/Contents/Resources/engines/scss/bin/scss:13:in `<main>'
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Error: $color: 'color(#fe1d37, \"lighten-2\")' is not a color for `lighten'\A         on line 3 of /Applications/XAMPP/xamppfiles/htdocs/QUINIELA/QUINIELA FINAL/vendors/materialize-src/sass/components/_variables.scss\A         from line 9 of /Applications/XAMPP/xamppfiles/htdocs/QUINIELA/QUINIELA FINAL/vendors/materialize-src/sass/materialize.scss\A \A 1: @charset \"UTF-8\";\A 2: \A 3: // Mixins\A 4: @import \"components/prefixer\";\A 5: @import \"components/mixins\";\A 6: //@import \"components/color\";\A 7: \A 8: // Variables;"; }

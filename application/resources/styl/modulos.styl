@@ -1,0 +1,244 @@
+header
+	h1
+		font-size 2.5em
+		em
+			color Primario
+	@media(max-width:720px)
+		h1
+			font-size 8vw!important
+#polePosition,#vueltaRapida,#TopTen,#VistaRapida
+	display none
+	&.activo
+		stack()
+		cf()
+.Navegador
+	cf()
+	padding 1em 0
+	ul
+		cf()
+		padding 0
+		margin 1em 0 2em
+		li
+			column(1/2, cycle:2)
+			text-align center
+		.Disable
+			color #aaa
+#polePosition .listaPilotos, #vueltaRapida .listaPilotos
+	@media(max-width:720px)
+		column(2/3)
+		shift(.5/3)
+	@media(max-width:480px)
+		column(2.5/3)
+		shift(.25/3)
+.listaPilotos
+	padding 0
+	stack()
+	li
+		span(1/2, cycle:2)
+		cf()
+		list-style none
+		background-color #dfdfdf
+		padding .5em
+		border 1px solid #ccc
+		transition all .2s ease
+		position relative
+		cursor pointer
+		@media(max-width:720px)
+			stack()
+		&.pilotoActivo
+			background-color Primario!important
+			color white
+			&:after
+				content url("http://placehold.it/50x50")
+				position absolute
+				top 0
+				right 0
+				z-index 1
+				width 50px
+				height 50px
+				
+		&.pilotoActivo:hover
+			background-color Primario
+		&:nth-child(2n+2)
+			background-color lighten(#dfdfdf, 20%)
+		&:hover
+			background-color white
+		img
+			column(1/4)
+			display inline-block
+			vertical-align middle
+			float none
+		.info
+			column(3/4)
+			display inline-block
+			vertical-align middle
+			float none
+			h3
+				font-size .8em
+				margin 0 0 .25em
+				text-align left
+				line-height 1em
+				text-overflow ellipsis
+				overflow hidden
+				white-space nowrap
+			p
+				margin 0
+				font-size .7em
+				line-height 1em
+.listaPilotosTopTenResultado
+	column(1/2)
+	background-color #ccc
+	li
+		stack()
+		list-style-type upper-roman
+		img
+			column(1/6)
+		.info
+			column(5/6)
+			h3
+				font-size .8em
+				text-align left
+				margin 0
+				line-height 1em
+			p
+				margin 0
+				font-size .7em
+				line-height 1.25em
+				font-style italic
+				
+.listaPilotosTopTen
+	column(1/2)
+	text-align left
+	height 340px
+	overflow-y auto
+	overflow-x visible
+	padding 0 .5em
+	li
+		padding 1rem
+		display block
+		clear both
+		background-color #ccc
+		cursor pointer
+		overflow hidden
+		width 100%
+		transition all .3s ease
+		cf()
+		&:hover
+			transform scale(1.025)
+			box-shadow: 0 8px 17px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+		&.pilotoActivo
+			background-color Primario!important
+			color white
+			transform scale(1.05)
+			box-shadow: 0 8px 17px rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+		img
+			column(1/6)
+		.info
+			column(5/6)
+			h3
+				font-size .8em
+				text-align left
+				margin 0
+				line-height 1em
+			p
+				margin 0
+				font-size .7em
+				line-height 1.25em
+				font-style italic
+.gpNuevo
+	stack()
+	cf()
+	margin-top 1em
+	margin-bottom 1em
+	.gpNuevo__bandera
+		column(2/8)
+		padding .5em
+		@media(max-width: 720px)
+			column(1.5/3)
+			shift(.75/3)
+	.gpNuevo__info
+		column(3.75/8)
+		color #555
+		text-align left
+		@media(max-width: 720px)
+			column(2.5/3)
+			shift(.25/3)
+			text-align center
+		h3
+			font-size 1.5rem
+			margin .75em 0 0
+			padding 0
+			line-height 1.25em
+			text-align left
+			@media(max-width: 720px)
+				text-align center
+		p
+			font-size 16px
+			margin 0
+			padding 0
+			line-height 1.25em
+		.fechaLimite
+			color Primario
+	.gpNuevo__boton
+		column(2.25/8)
+		padding .5em
+		@media(max-width: 720px)
+			stack()
+		.boton
+			margin 0!important
+			font-size 1.3rem!important
+			padding .75em .5em
+			line-height 1.25em
+table.PuntosGP
+	background-color white
+	font-style italic
+	tr
+		background-color #ccc
+		font-size .8em
+		&:nth-child(odd)
+			background-color #ddd
+			line-height 1em
+		&.titulos
+			background-color Primario
+		&.total
+			background-color negro
+			color white
+			font-weight 700
+			td:first-child
+				text-align right
+				padding 0 1em
+	hr
+		border black
+	td
+		border-radius 0px
+	th
+		color white
+		font-weight 400
+		border-radius 0px
+		line-height 1em
+
+#poleResultado,#vueltaResultado
+	column(1/2, cycle:2)
+	@media(max-width: 720px)
+		column(2/3, uncycle:2)
+		shift(.5/3)
+	@media(max-width:480px)
+		column(2.5/3)
+		shift(.25/3)
+	.listaPilotos
+		stack()
+		li
+			stack()
+			background-color white
+#toptenResultado
+	column(2/3)
+	shift(.5/3)
+	@media(max-width:480px)
+		column(2.5/3)
+		shift(.25/3)
+	.listaPilotos
+		stack()
+		cf()
+		li
+			stack()
+			background-color white
