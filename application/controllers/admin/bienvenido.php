@@ -8,11 +8,8 @@ class Bienvenido extends CI_Controller {
     public function __construct() {
         parent::__construct();
         // Your own constructor code
-        $this->load->library('session');
-        $this->load->library('grocery_CRUD');
-        
-        $this->load->database();
-        
+        $this->load->library(array('session', 'grocery_CRUD'));
+                
         $this->load->model(array("admin/M_consultas", "admin/M_insert", "admin/M_update"));
     }
 

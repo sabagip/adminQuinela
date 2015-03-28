@@ -36,12 +36,12 @@ define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
-define("BASE_URL", "http://localhost/adminQuiniela/");
-define("BASE_URL2", "http://localhost/adminQuiniela/index.php/");
-define("STYLE_URL", "http://localhost/adminQuiniela/application/resources/" );
-define("JS_URL", "http://localhost/adminQuiniela/application/resources/js/" );
-define("BOWER_URL", "http://localhost/adminQuiniela/application/resources/bower_components/" );
-define("IMG_URL", "http://localhost/adminQuiniela/application/resources/img/");
+define("BASE_URL", "http://localhost/adminQuinela/");
+define("BASE_URL2", "http://localhost/adminQuinela/index.php/");
+define("STYLE_URL", "http://localhost/adminQuinela/application/resources/" );
+define("JS_URL", "http://localhost/adminQuinela/application/resources/js/" );
+define("BOWER_URL", "http://localhost/adminQuinela/application/resources/bower_components/" );
+define("IMG_URL", "http://localhost/adminQuinela/application/resources/img/");
 define("KEY", 'Q3!A#Y)S{qWi8a6:i}f8VJUGM(V(Fy*#}e*$N)DlJ2Q%w{1+/#zd^h6kmv.,gbQ');
 
 define('FBAPPID' , '608278609309133');
