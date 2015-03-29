@@ -281,12 +281,10 @@ class Bienvenido extends CI_Controller {
             redirect(site_url('inicio'));
         endif;
         $data['jornada'] = $this->M_consultas->get_jornadas();
-        //echo "<pre>"; print_r($jornada); die;
-        $data['posiciones'] = $this->posicionesAleatorias(1, 18);
-        $data['posiciones1'] = $this->posicionesAleatorias(1, 18);
-        $data['posiciones2'] = $this->posicionesAleatorias(10, 18);
+        $data['pilotos'] = $this->M_consultas->get_pilotos(FALSE);
+        //echo "<pre>"; print_r($data); die;
         
-        $data['body'] = "app/admin/resultados";
+        $data['body'] = "app/admin/prediccion";
         $this->load->view("includes/admin/cargaPagina", $data);
     }
     

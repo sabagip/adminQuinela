@@ -44,6 +44,9 @@ define("BOWER_URL", "http://localhost/adminQuinela/application/resources/bower_c
 define("IMG_URL", "http://localhost/adminQuinela/application/resources/img/");
 define("KEY", 'Q3!A#Y)S{qWi8a6:i}f8VJUGM(V(Fy*#}e*$N)DlJ2Q%w{1+/#zd^h6kmv.,gbQ');
 
+define("IMGPILOTOS_URL", "http://localhost/adminQuinela/application/resources/img/pilotos/");
+define("IMGPISTAS_URL", "http://localhost/adminQuinela/application/resources/img/gp/");
+
 define('FBAPPID' , '608278609309133');
 define('FBSECRET' , 'f9b5e28e4109e77e846945d8ff51e96c');
 

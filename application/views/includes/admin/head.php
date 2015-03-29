@@ -9,6 +9,10 @@ and open the template in the editor.
         <meta charset="UTF-8" lang="es">
         <title>Pruebas Quiniela</title>
         <link rel="stylesheet"  href="<?php echo STYLE_URL; ?>estilo.css" type="text/css" media="all"/>
+        <!--<link rel="stylesheet"  href="<?php echo STYLE_URL; ?>estilos.css" type="text/css" media="all"/>-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="<?php echo JS_URL?>jquery-ui.min.js"></script>
+        <script src="<?php echo JS_URL?>countdown.js"></script>
         <?php 
             if(isset($css_files)):
                 foreach($css_files as $file): ?>

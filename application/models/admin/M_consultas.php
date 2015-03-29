@@ -208,4 +208,21 @@ class M_consultas extends CI_Model{
             //redirect(base_url().'index','refresh');
         endif;   
     }
+    
+    function get_pilotos($suplente){
+        $this->db   
+                ->select('piloto.idPiloto, piloto.nombre, piloto.apellidoP, piloto.apellidoM, piloto.fotografia')
+                ->select('escuderia.nombre as escuderia')
+                ->from('f1_piloto as piloto')
+                ->join('f1_escuderia as escuderia', 'escuderia.idEscuderia = piloto.idEscuderia');
+        
+        if($suplente):
+            $this->db->where('suplente != 0');
+        else:
+            $this->db->where('suplente', 0);    
+        endif;
+        
+        $query = $this->db->get();
+        return $query->result();
+    }
 }
