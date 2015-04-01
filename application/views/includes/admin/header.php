@@ -9,6 +9,7 @@
                     <li><a title="Escuderias" href="<?php echo base_url() ."index.php/admin/bienvenido/escuderias"; ?>">Escuderias</a></li>
                     <li><a title="Podio" href="<?php echo base_url() ."index.php/admin/bienvenido/podio"; ?>">Podio</a></li>
                     <li><a title="Añadir Resultado" href="<?php echo base_url() ."index.php/admin/bienvenido/anadeResultado"; ?>">Añadir Resultado</a></li>
+                    <li><a title="Añadir Resultado" href="<?php echo base_url() ."index.php/admin/bienvenido/expertos"; ?>">Expertos</a></li>
                     <li>Bienvenido <?php echo $this->session->userdata('username');?></li>
                     <li><a href="<?php echo base_url('index.php/index/logout_ci')?>">Cerrar Sesión</a></li>
                 </ul>

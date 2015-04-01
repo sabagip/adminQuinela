@@ -312,5 +312,51 @@ class Bienvenido extends CI_Controller {
                  endif;
              endwhile;
              return $valores;
+    }
+    
+    public function expertos(){
+        
+        if($this->session->userdata['perfil'] == FALSE && $this->session->userdata['perfil'] != enc_encrypt('2', KEY)):
+            redirect(site_url('inicio'));
+        endif;
+        
+        try{
+            $crud = new Grocery_CRUD();
+            $crud->set_table("f1_usuario");
+            
+            $crud->columns();
+            $crud->display_as(array(
+                                    'nombre'            =>  'Nombre',
+                                    'apellidoP'         =>  'Apellido Paterno',
+                                    'usuario'           =>  'Usuario',
+                                    'contrasena'        =>  'Contraseña',
+                                    'email'             =>  'Correo Electronico',
+                                    'fechaNacimiento'   =>  'Fecha de Nacimiento',
+                                    'sexo'              =>  'Sexo',
+                                    'idPais'            =>  'Pais',
+                                    'fotografia'        =>  'Fotografia',
+                                    'activo'            =>  'Activo',
+                                    
+                ));
+
+            $crud->required_fields('nombre', 'apellidoP', 'usuario', 'contrasena', 
+                                    'email', 'fechaNacimiento', 'sexo', 'idPais', 
+                                    'fotografia', 'activo');
+            
+            $crud->set_field_upload('fotografia', 'application/resources/img/expertos');
+            
+            $crud->set_relation('idPais',         'f1_pais', 'nombre'); 
+            $crud->where("idPermiso = 3");
+            
+            $this->grocery_crud->callback_before_update('contrasena', array($this,'encriptaPassword'));
+            $this->grocery_crud->callback_before_insert('contrasena', array($this,'encriptaPassword'));
+            $output = $crud->render();
+            $output->body = "app/admin/index";
+            $this->load->view('includes/admin/cargaPagina', $output);
         }
+        catch(Exception $e){
+            show_error($e->getMessage());
+        }
+        
+    }
 }
