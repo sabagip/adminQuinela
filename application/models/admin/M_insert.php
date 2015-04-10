@@ -6,7 +6,7 @@ class M_insert extends CI_Model{
         //  %Y/%M/%d'
     }
     
-    function saveApuestapole($apuesta){
+    function saveResultadoPole($apuesta){
         try{
             $this->db->insert('f1_resultado_pole', $apuesta);
             return TRUE;
@@ -17,7 +17,7 @@ class M_insert extends CI_Model{
         }
     }
     
-    function saveApuestaVuelta($apuesta){
+    function saveResultadoVuelta($apuesta){
         try{
             $this->db->insert('f1_resultado_vuelta', $apuesta);
             return TRUE;
@@ -26,21 +26,22 @@ class M_insert extends CI_Model{
         }
     }
     
-    function saveApuestaTopTen($apuesta){
+    function saveResultadoTopTen($apuesta){
         try{
             $datos = array(
-                                'idPilotFirst'      =>    $apuesta[1],
-                                'idPilotSecond'     =>    $apuesta[2],
-                                'idPilotThird'      =>    $apuesta[3],
-                                'idPilotFour'       =>    $apuesta[4],
-                                'idPilotFive'       =>    $apuesta[5],
-                                'idPilotSix'        =>    $apuesta[6],
-                                'idPilotSeven'      =>    $apuesta[7],
-                                'idPilotEigth'      =>    $apuesta[8],
-                                'idPilotNine'       =>    $apuesta[9],
-                                'idPilotTen'        =>    $apuesta[10],
-                                'idJornada'         =>    $apuesta['jornada']);
-
+                                'idPilotFirst'      =>    $apuesta[0]->idPilotFirst,
+                                'idPilotSecond'     =>    $apuesta[1]->idPilotSecond,
+                                'idPilotThird'      =>    $apuesta[2]->idPilotThird,
+                                'idPilotFour'       =>    $apuesta[3]->idPilotFour,
+                                'idPilotFive'       =>    $apuesta[4]->idPilotFive,
+                                'idPilotSix'        =>    $apuesta[5]->idPilotSix,
+                                'idPilotSeven'      =>    $apuesta[6]->idPilotSeven,
+                                'idPilotEigth'      =>    $apuesta[7]->idPilotEigth,
+                                'idPilotNine'       =>    $apuesta[8]->idPilotNine,
+                                'idPilotTen'        =>    $apuesta[9]->idPilotTen,
+                                'idJornada'         =>    $apuesta['idJornada']);
+            
+            //echo "<pre>"; print_r($datos); die;
             $this->db->insert('f1_resultado_top_ten', $datos);
             return TRUE;
         } catch (Exception $ex) {

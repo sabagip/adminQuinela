@@ -139,7 +139,7 @@ class Bienvenido extends CI_Controller {
             $crud->required_fields('nombre', 'idPais', 'longitud');
 
             $crud->set_relation('idPais', 'f1_pais', 'nombre');
-            $crud->set_field_upload('fotografia', 'application/resources/img/gp');
+            $crud->set_field_upload('fotografia', IMGPISTAS_URL);
 
             $output = $crud->render();
             $output->body = "app/admin/index";
@@ -172,7 +172,7 @@ class Bienvenido extends CI_Controller {
             
             $crud->set_relation('idPais', 'f1_pais', 'nombre');
             $crud->set_relation('idEscuderia', 'f1_escuderia', 'nombre');
-            $crud->set_field_upload('fotografia', 'application/resources/img/pilotos');
+            $crud->set_field_upload('fotografia', IMGPILOTOS_URL);
             $output = $crud->render();
             $output->body = "app/admin/index";
             $this->load->view('includes/admin/cargaPagina', $output);
@@ -197,7 +197,7 @@ class Bienvenido extends CI_Controller {
 
             $crud->required_fields('nombre', 'logo');
             
-            $crud->set_field_upload('logo', 'application/resources/img/escuderias');
+            $crud->set_field_upload('logo', IMGESCUDERIA_URL);
             $output = $crud->render();
             $output->body = "app/admin/index";
             $this->load->view('includes/admin/cargaPagina', $output);
@@ -280,8 +280,16 @@ class Bienvenido extends CI_Controller {
         if($this->session->userdata['perfil'] == FALSE && $this->session->userdata['perfil'] != enc_encrypt('2', KEY)):
             redirect(site_url('inicio'));
         endif;
-        $data['jornada'] = $this->M_consultas->get_jornadas();
+        //$data['jornadas'] = $this->M_consultas->get_jornadas();
+        $data['jornada'] = $this->M_consultas->get_lastRace();
         $data['pilotos'] = $this->M_consultas->get_pilotos(FALSE);
+        
+        $resultado = $this->M_consultas->get_resultadoPole($data['jornada'][0]->idJornada);
+        if(empty($resultado)):
+            $data['resultado'] = TRUE;
+        else:
+            $data['resultado'] = FALSE;
+        endif;
         //echo "<pre>"; print_r($data); die;
         
         $data['body'] = "app/admin/prediccion";
@@ -343,7 +351,8 @@ class Bienvenido extends CI_Controller {
                                     'email', 'fechaNacimiento', 'sexo', 'idPais', 
                                     'fotografia', 'activo');
             
-            $crud->set_field_upload('fotografia', 'application/resources/img/expertos');
+            //$crud->set_field_upload('fotografia', 'application/resources/img/expertos');
+            $crud->set_field_upload('fotografia', IMGEXPERTO_URL);
             
             $crud->set_relation('idPais',         'f1_pais', 'nombre'); 
             $crud->where("idPermiso = 3");

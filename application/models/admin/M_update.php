@@ -7,7 +7,7 @@ class M_update extends CI_Model{
         //  %Y/%M/%d'
     }
     
-    function updateApuestaPole($update){
+    function updateResultadoPole($update){
         try{
             $this->db->where("idJornada", $update['idJornada']);
             $this->db->update("f1_resultado_pole", $update);
@@ -18,7 +18,7 @@ class M_update extends CI_Model{
         }
     }
     
-    function updateApuestaVuelta($update){
+    function updateResultadoVuelta($update){
         try{
 
             $this->db->where("idJornada", $update['idJornada']);
@@ -29,23 +29,23 @@ class M_update extends CI_Model{
         }
     }
     
-    function updateApuestaTopTen($apuesta){
+    function updateResultadoTopTen($apuesta){
         
         try{
             $datos = array(
-                                'idPilotFirst'      =>    $apuesta[1],
-                                'idPilotSecond'     =>    $apuesta[2],
-                                'idPilotThird'      =>    $apuesta[3],
-                                'idPilotFour'       =>    $apuesta[4],
-                                'idPilotFive'       =>    $apuesta[5],
-                                'idPilotSix'        =>    $apuesta[6],
-                                'idPilotSeven'      =>    $apuesta[7],
-                                'idPilotEigth'      =>    $apuesta[8],
-                                'idPilotNine'       =>    $apuesta[9],
-                                'idPilotTen'        =>    $apuesta[10],
-                                'idJornada'         =>    $apuesta['jornada']);
+                                'idPilotFirst'      =>    $apuesta[0]->idPilotFirst,
+                                'idPilotSecond'     =>    $apuesta[1]->idPilotSecond,
+                                'idPilotThird'      =>    $apuesta[2]->idPilotThird,
+                                'idPilotFour'       =>    $apuesta[3]->idPilotFour,
+                                'idPilotFive'       =>    $apuesta[4]->idPilotFive,
+                                'idPilotSix'        =>    $apuesta[5]->idPilotSix,
+                                'idPilotSeven'      =>    $apuesta[6]->idPilotSeven,
+                                'idPilotEigth'      =>    $apuesta[7]->idPilotEigth,
+                                'idPilotNine'       =>    $apuesta[8]->idPilotNine,
+                                'idPilotTen'        =>    $apuesta[9]->idPilotTen,
+                                'idJornada'         =>    $apuesta['idJornada']);
 
-            $this->db->where("idJornada", $apuesta['jornada']);
+            $this->db->where("idJornada", $apuesta['idJornada']);
             $this->db->update('f1_resultado_top_ten', $datos);
             return TRUE;
         } catch (Exception $ex) {

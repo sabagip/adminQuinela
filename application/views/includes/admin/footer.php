@@ -1,7 +1,3 @@
-        <footer>
-            <p>Posted by: Hege Refsnes</p>
-            <p>Contact information: <a href="mailto:someone@example.com">
-            someone@example.com</a>.</p>
-        </footer>
+    <script src="<?php echo JS_URL;?>quiniela.app.js"></script>
     </body>
 </html>

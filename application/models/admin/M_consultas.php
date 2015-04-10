@@ -110,7 +110,9 @@ class M_consultas extends CI_Model{
                 ->where("nombre", $nombreLugar);
         
         $query = $this->db->get();
-        return (int) $query->result()[0]->valor;
+        $query = (int) $query->result()[0]->valor;
+        echo "<pre>"; print_r($query); die;
+        return $query;
     }
     
     function get_puntajePole(){
@@ -223,6 +225,22 @@ class M_consultas extends CI_Model{
         endif;
         
         $query = $this->db->get();
+        return $query->result();
+    }
+    
+    function get_lastRace(){
+        $this->db
+                ->select('jornada.idJornada, jornada.fechaJornada, pista.nombre')
+                ->distinct()
+                ->from('f1_jornada as jornada')
+                ->join('f1_pistas AS pista', 'pista.idPista = jornada.idPista')
+                ->where('jornada.fechaJornada < now()')
+                ->where('date_format(jornada.fechaJornada, "%Y") = YEAR( NOW() )')
+                ->order_by('fechaJornada DESC')
+                ->limit(1);
+        
+        $query = $this->db->get();
+        //echo "<pre>"; print_r($this->db->last_query()); die;
         return $query->result();
     }
 }

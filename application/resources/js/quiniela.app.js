@@ -1,4 +1,4 @@
-//(function(){
+(function(){
 	var PolePosition = "";
 	var VueltaRapida = "";
 	var TopTen = [];
@@ -16,7 +16,7 @@
 		else if (pantalla === 3) {
 			$("#polePosition,#vueltaRapida,#TopTen,#VistaRapida").removeClass("activo");
 			$("#TopTen").addClass("activo");
-			$("header h1 em").text("PRIMEROS DIEZ")
+			$("header h1 em").text("10 PRIMEROS")
 		}
 		else if (pantalla === 4) {
 			$("#TopTen").removeClass("activo");
@@ -29,27 +29,99 @@
 		var pole = PolePosition.idpiloto;
 		var vueltarapida = VueltaRapida.idpiloto;
 		var topTen = [];
-
-		for(i=0;i<TopTen.length;i++){
+                var jornada = $("#idJornada").val();
+                for(i=0;i<TopTen.length;i++){
 			topTen.push(TopTen[i].idpiloto);
 		}
-
-		var respuesta = {"PolePosition":pole,"VueltaRapida":vueltarapida, "TopTen":topTen};
-		//Respuesta con POST
-		//AQUÍ CAMBIA LAS RUTAS SERGIO
-		$.post("http://localhost/QUINIELA-FASTmag/index.php/finalUser/prediccion/saveApuesta", respuesta).done(function(){
-			console.log("Se envio con éxito");
-                        self.location="http://localhost/QUINIELA-FASTmag/index.php/finalUser/informacion";
-
-		});
+                
+                
+		var respuesta = {"PolePosition":pole,"VueltaRapida":vueltarapida, "TopTen":topTen, "jornada":jornada};
+                $.ajax({
+                               type: "POST",
+                               url: "http://localhost/adminQuinela/index.php/admin/prediccion/saveApuesta",
+                               data: respuesta, // Adjuntar los campos del formulario enviado.
+                               dataType: "json",
+                               success: function(request){
+                                    console.log("success ", request);
+                                    alertify
+                                        .alert("Tu pronóstico a sido guardado.", function(){
+                                        alertify.message('OK');
+                                    });
+                                   self.location="http://localhost/adminQuinela/index.php/admin/bienvenido";
+                               },
+                               error : function(request){
+                                   console.log("fail ",  request);
+                                   
+                                    if(request.responseText == "vacio"){
+                                         alertify
+                                            .alert("Verifica que hayas seleccionado los pilotos correspondientes.", function(){
+                                            alertify.message('Error');
+                                         });
+                                    }
+                                    if(request.readyState == 4){
+                                         alertify
+                                         .alert("Verifica que hayas seleccionado los pilotos correspondientes.", function(){
+                                           alertify.message('Error');
+                                         });
+                                    }
+                                   
+                               }
+                                });
+	};
+        
+        function actualizar(){
+		var pole = PolePosition.idpiloto;
+		var vueltarapida = VueltaRapida.idpiloto;
+		var topTen = [];
+                var jornada = $("#idJornada").val();
+                for(i=0;i<TopTen.length;i++){
+			topTen.push(TopTen[i].idpiloto);
+		}
+                
+                
+		var respuesta = {"PolePosition":pole,"VueltaRapida":vueltarapida, "TopTen":topTen, "jornada":jornada};
+                $.ajax({
+                               type: "POST",
+                               url: "http://localhost/adminQuinela/index.php/admin/prediccion/saveApuesta",
+                               data: respuesta, // Adjuntar los campos del formulario enviado.
+                               dataType: "json",
+                               success: function(request){
+                                    console.log("success ", request);
+                                    alertify
+                                        .alert("Tu pronóstico a sido actualizado.", function(){
+                                        alertify.message('OK');
+                                    });
+                                   self.location="http://localhost/adminQuinela/index.php/admin/bienvenido";
+                               },
+                               error : function(request){
+                                   console.log("fail ",  request);
+                                   
+                                    if(request.responseText == "vacio"){
+                                         alertify
+                                            .alert("Verifica que hayas seleccionado los pilotos correspondientes.", function(){
+                                            alertify.message('Error');
+                                         });
+                                    }
+                                    if(request.readyState == 4){
+                                         alertify
+                                         .alert("Verifica que hayas seleccionado los pilotos correspondientes.", function(){
+                                           alertify.message('Error');
+                                         });
+                                    }
+                                   
+                               }
+                                });
 	};
 
 	function prediccion(){
 		var Pantalla = 1;
 		Pantallas(Pantalla)
 		$(".Navegador .siguiente").click(function(){
-			Pantalla++;
-			Pantallas(Pantalla);
+			var x = $(this).hasClass("Disable");
+			if (!x){
+				Pantalla++;
+				Pantallas(Pantalla);
+			}
 		});
 		$(".Navegador .anterior").click(function(){
 			Pantalla--;
@@ -57,15 +129,15 @@
 		});
 
 		$("#topTenGuardar").click(function(){
-			
+			TopTen = [];
 			$(".listaPilotosTopTenResultado li").each(function(){
 				var dato_idPiloto = $(this).data("idpiloto");
-				var dato_escuderia = $(this).children(".info").children("p").text();
-				var dato_nombre = $(this).children(".info").children("h3").text();
-				var dato_imagenpiloto =  dato_imagenpiloto = $(this).children("img").attr("src");
+				var dato_escuderia = $(this).children(".pilotoInfoCondensada").children(".info").children("p").text();
+				var dato_nombre = $(this).children(".pilotoInfoCondensada").children(".info").children("h3").text();
+				var dato_imagenpiloto =  dato_imagenpiloto = $(this).children(".pilotoInfoCondensada").children("img").attr("src");
 				TopTen.push({"idpiloto":dato_idPiloto,"nombre":dato_nombre, "imagenpiloto":dato_imagenpiloto, "escuderia":dato_escuderia });
 			});
-			console.log(TopTen);
+			//console.log(TopTen);
 
 			// Parseo Intenso
 			//PolePosition
@@ -75,66 +147,90 @@
 			//TopTen
 			var TopTenResultado = "";
 			for(i=0;i<TopTen.length;i++){
-				var cadena = '<li data-idpiloto="'+TopTen[i].idpiloto+'"><img src="'+TopTen[i].imagenpiloto+'" alt=""><span class="info"> <h3>'+TopTen[i].nombre+'</h3> <p>'+TopTen[i].escuderia+'</p></span></li>'
+				var cadena = '<li data-idpiloto="'+TopTen[i].idpiloto+'"><span class="pilotoInfoCondensada"><img src="'+TopTen[i].imagenpiloto+'" alt=""><span class="info"> <h3>'+TopTen[i].nombre+'</h3> <p>'+TopTen[i].escuderia+'</p></span></span></li>'
 				TopTenResultado = TopTenResultado + cadena;
 			}
-			console.log(TopTenResultado);
-			
-
+			//console.log(TopTenResultado);
 			//Pintado
 			$("#poleResultado .listaPilotos").html(PoleResultado);
 			$("#vueltaResultado .listaPilotos").html(VueltaResultado);
 			$("#toptenResultado .listaPilotos").html(TopTenResultado);
+                        
 
 			//debugger;
 		});
 
-		$(".listaPilotosPole li").click(function(){
-			$(".listaPilotosPole li").each(function(){
-				$(this).removeClass("pilotoActivo");
-			});
-			var dato_idPiloto = $(this).data("idpiloto");
-			var dato_nombre = $(this).children(".info").children("h3").text();
-			var dato_escuderia = $(this).children(".info").children("p").text();
-			var dato_imagenpiloto =  dato_imagenpiloto = $(this).children("img").attr("src");
-			PolePosition = {
-				"idpiloto":dato_idPiloto,
-				"nombre":dato_nombre,
-				"imagenpiloto":dato_imagenpiloto,
-				"escuderia":dato_escuderia
-			};
-			$(this).addClass("pilotoActivo");
-		console.log("PolePosition: "+PolePosition+", VueltaRapida: "+VueltaRapida)
+$(".listaPilotosPole li").click(function(){
+	$(".listaPilotosPole li").each(function(){
+		$(this).removeClass("pilotoActivo");
 	});
-		$(".listaPilotosVueltaRapida li").click(function(){
-			$(".listaPilotosVueltaRapida li").each(function(){
-				$(this).removeClass("pilotoActivo");
-			});
-			var dato_idPiloto = $(this).data("idpiloto");
-			var dato_nombre = $(this).children(".info").children("h3").text();
-			var dato_escuderia = $(this).children(".info").children("p").text();
-			var dato_imagenpiloto =  dato_imagenpiloto = $(this).children("img").attr("src");
-			VueltaRapida = {
-				"idpiloto":dato_idPiloto,
-				"nombre":dato_nombre,
-				"imagenpiloto":dato_imagenpiloto,
-				"escuderia":dato_escuderia
-			};
-			$(this).addClass("pilotoActivo");
-		console.log("PolePosition: "+PolePosition+", VueltaRapida: "+VueltaRapida)
+	var dato_idPiloto = $(this).data("idpiloto");
+	var dato_nombre = $(this).children(".info").children("h3").text();
+	var dato_escuderia = $(this).children(".info").children("p").text();
+	var dato_imagenpiloto =  dato_imagenpiloto = $(this).children("img").attr("src");
+	PolePosition = {
+		"idpiloto":dato_idPiloto,
+		"nombre":dato_nombre,
+		"imagenpiloto":dato_imagenpiloto,
+		"escuderia":dato_escuderia
+	};
+	$(this).addClass("pilotoActivo");
+	$("#polePosition .Navegador .siguiente").removeClass("Disable").addClass("boton--secundario");
+	//console.log("PolePosition: "+PolePosition+", VueltaRapida: "+VueltaRapida)
+});
+$(".listaPilotosVueltaRapida li").click(function(){
+	$(".listaPilotosVueltaRapida li").each(function(){
+		$(this).removeClass("pilotoActivo");
 	});
+	var dato_idPiloto = $(this).data("idpiloto");
+	var dato_nombre = $(this).children(".info").children("h3").text();
+	var dato_escuderia = $(this).children(".info").children("p").text();
+	var dato_imagenpiloto =  dato_imagenpiloto = $(this).children("img").attr("src");
+	VueltaRapida = {
+		"idpiloto":dato_idPiloto,
+		"nombre":dato_nombre,
+		"imagenpiloto":dato_imagenpiloto,
+		"escuderia":dato_escuderia
+	};
+	$(this).addClass("pilotoActivo");
+	$("#vueltaRapida .Navegador .siguiente").removeClass("Disable").addClass("boton--secundario");
+	//console.log("PolePosition: "+PolePosition+", VueltaRapida: "+VueltaRapida)
+});
 
-	}
+}
 
-	function inicio(){
-		$("#principal .menuActivador").click(function(){
-			$("#menuItems").toggleClass("menuItemsActivo");
+function lightboxCerrar(){
+	$(".lightbox").removeClass("lightbox--activo");
+}
+
+function inicio(){
+	//AQUÍ ESTA LAS FECHAS DEL CUMPLE
+	$( "#userAge" ).datepicker({
+		changeMonth: true,
+		changeYear: true,
+		yearRange: "1910:2015",
+		maxDate: "+1D",
+		minDate:"-100Y",
+		dayNames: ["Domingo", "Lunes", "Martes","Miercoles", "Jueves", "Viernes", "Sábado"],
+		dayNamesMin: ["Dom","Lun", "Mar", "Mie", "Jue", "Vie", "Sab"],
+		monthNames:["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+		monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+	});
+	$(".lightbox__fondo").click(lightboxCerrar);
+	$(".expertos").click(function(){
+		$("#ExpertosLight").addClass("lightbox--activo");
+	});
+	$("#principal .menuActivador").click(function(){
+		$("#menuItems").toggleClass("menuItemsActivo");
 		//console.log("OLA KE ASE");
 	});
 
-		prediccion();
-		$(".Guardar").click(guardar);
-	}
+	prediccion();
+	//$(".GuardarUsuario").click(guardar("url.php"));
+	$(".GuardarPrediccion").click(guardar);
+        $(".ActualizarPrediccion").click(actualizar);
+        
+}
 
-	$(document).on("ready", inicio);
-//}());
+$(document).on("ready", inicio);
+}());
