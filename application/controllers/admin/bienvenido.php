@@ -32,10 +32,19 @@ class Bienvenido extends CI_Controller {
             'puntosTotales' => 'Puntos Totales'));
 
         $crud->required_fields(
-                '(nombre)', '{nombre}  {apellidoP}', 'contrasena', 'email', 'fechaNacimiento', 'idPais');
+                '(nombre)', '{nombre}  {apellidoP}', 'contrasena', 'email', 'fechaNacimiento', 'idPais', 'fechaRegistro', 'idPermiso');
+        
+        $crud->field_type('sexo','dropdown',
+                                array( "Masculino"  => "Masculino", "Femenino" => "Femenino"));
+        
+        $crud->field_type('primerLogin','dropdown',
+                                array( "1"  => "Si", "0" => "No"));
+        
+        $crud->field_type('idPermiso','dropdown',
+                                array( "1"  => "Usuario Normal"));
 
         $crud->where('idPermiso', 1);
-        $crud->unset_fields('idPermiso');
+        $crud->unset_fields('fotografia', 'puntosTotales', 'facebook', 'twitter', 'google');
         $crud->set_relation("idPais", "f1_pais", "nombre");
         
         $crud->callback_before_update(array($this, 'encriptaPassword'));
@@ -69,14 +78,19 @@ class Bienvenido extends CI_Controller {
                 'idPais' => 'Pais'));
 
             $crud->where("idPermiso", 2);
-            $crud->unset_fields('idPermiso');
+            $crud->unset_fields('fotografia');
             
-            $crud->set_rules("sexo", "sexo1", "Masculino, Femenino");
+            $crud->field_type('sexo','dropdown',
+                                array( "Masculino"  => "Masculino", "Femenino" => "Femenino"));
+            
+            $crud->field_type('idPermiso','dropdown',
+                                array( "2"  => "Administrador"));
             
             $crud->set_relation("idPais", "f1_pais", "nombre");
 
             $crud->required_fields(
-                    'nombre)', '{nombre}  {apellidoP}', 'contrasena', 'email', 'telefonoCel', 'fechaNacimiento', 'pais');
+                    '(nombre)', '{nombre}  {apellidoP}', 'contrasena', 'email', 'telefonoCel', 'fechaNacimiento', 'pais', 'idPermiso');
+            
             
             
             $crud->callback_before_update(array($this, 'encriptaPassword'));
@@ -115,7 +129,10 @@ class Bienvenido extends CI_Controller {
 
         $crud->required_fields('fechaJornada', 'idPista');
         $crud->set_relation('idPista', "f1_pistas", 'nombre');
-
+        
+        $crud->callback_before_update(array($this,'actualizaImagenGP'));
+        $crud->callback_before_insert(array($this,'insertaImagenGP'));
+        $crud->callback_before_delete(array($this,'borraImagenGP'));
 
         $output = $crud->render();
         $output->body = "app/admin/index";
@@ -173,6 +190,11 @@ class Bienvenido extends CI_Controller {
             $crud->set_relation('idPais', 'f1_pais', 'nombre');
             $crud->set_relation('idEscuderia', 'f1_escuderia', 'nombre');
             $crud->set_field_upload('fotografia', IMGPILOTOS_URL);
+            
+            $crud->callback_before_update(array($this,'actualizaImagenPiloto'));
+            $crud->callback_before_insert(array($this,'insertaImagenPiloto'));
+            $crud->callback_before_delete(array($this,'borraImagenPiloto'));
+            
             $output = $crud->render();
             $output->body = "app/admin/index";
             $this->load->view('includes/admin/cargaPagina', $output);
@@ -323,7 +345,7 @@ class Bienvenido extends CI_Controller {
     }
     
     public function expertos(){
-        
+        //echo "<pre>"; print_r($_SERVER['DOCUMENT_ROOT']. IMGEXPERTO_URL) ; die;
         if($this->session->userdata['perfil'] == FALSE && $this->session->userdata['perfil'] != enc_encrypt('2', KEY)):
             redirect(site_url('inicio'));
         endif;
@@ -331,6 +353,7 @@ class Bienvenido extends CI_Controller {
         try{
             $crud = new Grocery_CRUD();
             $crud->set_table("f1_usuario");
+            $crud->set_subject("Experto");
             
             $crud->columns();
             $crud->display_as(array(
@@ -349,16 +372,28 @@ class Bienvenido extends CI_Controller {
 
             $crud->required_fields('nombre', 'apellidoP', 'usuario', 'contrasena', 
                                     'email', 'fechaNacimiento', 'sexo', 'idPais', 
-                                    'fotografia', 'activo');
+                                    'fotografia', 'activo', 'idPermiso');
             
             //$crud->set_field_upload('fotografia', 'application/resources/img/expertos');
             $crud->set_field_upload('fotografia', IMGEXPERTO_URL);
-            
             $crud->set_relation('idPais',         'f1_pais', 'nombre'); 
-            $crud->where("idPermiso = 3");
+            $crud->where("idPermiso", 3);
             
-            $this->grocery_crud->callback_before_update('contrasena', array($this,'encriptaPassword'));
-            $this->grocery_crud->callback_before_insert('contrasena', array($this,'encriptaPassword'));
+            $crud->unset_fields("primerLogin", "puntosTotales", "facebook", "twitter", "google");
+            
+            $crud->field_type('sexo','dropdown',
+                                array( "Masculino"  => "Masculino", "Femenino" => "Femenino"));
+            $crud->field_type('idPermiso','dropdown',
+                                array( "3"  => "Experto"));
+            
+            $crud->callback_before_update(array($this,'encriptaPassword'));
+            $crud->callback_before_update(array($this,'actualizaImagenExperto'));
+            
+            $crud->callback_before_insert(array($this,'encriptaPassword'));
+            $crud->callback_before_insert(array($this,'insertaImagenExperto'));
+            
+            $crud->callback_before_delete(array($this,'borraImagenExperto'));
+            
             $output = $crud->render();
             $output->body = "app/admin/index";
             $this->load->view('includes/admin/cargaPagina', $output);
@@ -367,5 +402,157 @@ class Bienvenido extends CI_Controller {
             show_error($e->getMessage());
         }
         
+    }
+    /*
+     * INICIAN CALLBACKS DE EXPERTOS
+     */
+    function insertaImagenExperto($datos){
+        $archivo = copy(IMGORIGTEXPERTO_URL . $datos['fotografia'], IMGDESTEXPERTO_URL . $datos['fotografia']);
+        if($archivo):
+            echo "hecho"; 
+            return true;
+        else:
+            return false;
+        endif;
+    }
+    
+    function borraImagenExperto($datos){
+        $usuario = $this->M_consultas->get_datosUsuarios(0, 0, 0, $datos);
+        //echo "<pre>"; print_r($usuario); die;
+        
+        if(!empty($usuario)):
+            $archivo = unlink(IMGORIGTEXPERTO_URL . $usuario[0]->fotografia);
+            $archivo2 = unlink(IMGDESTEXPERTO_URL . $usuario[0]->fotografia);
+            
+            if($archivo):
+                echo "hecho"; 
+                if($archivo2):
+                    return true;
+                else:
+                    return false;
+                endif;
+                
+            else:
+                return false;
+            endif;
+        endif;
+    }
+    
+    function actualizaImagenExperto($datos){
+        $archivo = copy(IMGORIGTEXPERTO_URL . $datos['fotografia'], IMGDESTEXPERTO_URL . $datos['fotografia']);
+        if($archivo):
+            echo "hecho"; 
+            return true;
+        else:
+            echo "falla"; 
+            die;
+        endif;
+    }
+    
+    /*
+     * INICIAN CALLBACKS DE PILOTOS
+     */
+    
+    function insertaImagenPiloto($datos){
+        $archivo = copy(IMGORIGTPILOTO_URL . $datos['fotografia'], IMGDESTPILOTO_URL . $datos['fotografia']);
+        if($archivo):
+            echo "hecho"; 
+            return true;
+        else:
+            return false;
+        endif;
+    }
+    
+    function borraImagenPiloto($datos){
+        $usuario = $this->M_consultas->get_datosUsuarios(0, 0, 0, $datos);
+        //echo "<pre>"; print_r($usuario); die;
+        
+        if(!empty($usuario)):
+            $archivo = unlink(IMGDESTPILOTO_URL . $usuario[0]->fotografia);
+            $archivo2 = unlink(IMGORIGTPILOTO_URL . $usuario[0]->fotografia);
+            
+            if($archivo):
+                echo "hecho"; 
+                if($archivo2):
+                    return true;
+                else:
+                    return false;
+                endif;
+                
+            else:
+                return false;
+            endif;
+        endif;
+    }
+    
+    function actualizaImagenPiloto($datos){
+        $archivo = copy(IMGORIGTPILOTO_URL . $datos['fotografia'], IMGDESTPILOTO_URL . $datos['fotografia']);
+        if($archivo):
+            echo "hecho"; 
+            return true;
+        else:
+            echo "falla"; 
+            die;
+        endif;
+    }
+    
+    /*
+     * INICIAN CALLBACKS DE JORNADAS
+     */
+    
+    function insertaImagenGP($datos){
+        $archivo = copy(IMGORIGTJORNADA_URL . $datos['fotografia'], IMGDESTJORNADA_URL . $datos['fotografia']);
+        if($archivo):
+            echo "hecho"; 
+            return true;
+        else:
+            return false;
+        endif;
+    }
+    
+    function borraImagenGP($datos){
+        $usuario = $this->M_consultas->get_datosUsuarios(0, 0, 0, $datos);
+        //echo "<pre>"; print_r($usuario); die;
+        
+        if(!empty($usuario)):
+            $archivo = unlink(IMGDESTJORNADA_URL . $usuario[0]->fotografia);
+            $archivo2 = unlink(IMGORIGJORNADA_URL . $usuario[0]->fotografia);
+            
+            if($archivo):
+                echo "hecho"; 
+                if($archivo2):
+                    return true;
+                else:
+                    return false;
+                endif;
+                
+            else:
+                return false;
+            endif;
+        endif;
+    }
+    
+    function actualizaImagenGP($datos){
+        $archivo = copy(IMGORIGJORNADA_URL . $datos['fotografia'], IMGDESTJORNADA_URL . $datos['fotografia']);
+        if($archivo):
+            echo "hecho"; 
+            return true;
+        else:
+            echo "falla"; 
+            die;
+        endif;
+    }
+    
+    function permisoUsuario($datos){
+        $datos['idPermiso'] = 1;
+        return $datos;
+    }
+    
+    function permisoAdmin($datos){
+        $datos['idPermiso'] = 2;
+    }
+    
+    function permisoExperto($datos){
+        $datos['idPermiso'] = 3;
     }
 }

@@ -141,11 +141,11 @@ class M_consultas extends CI_Model{
         $this->db
                     ->select("user.idUsuario, user.usuario, user.idPais, pais.nombre AS pais, user.puntosTotales")
                     ->select("user.nombre, user.apellidoP, user.apellidoM, user.idPermiso, user.primerLogin")
-                    ->select('user.email, user.contrasena')
+                    ->select('user.email, user.contrasena, user.fotografia')
                     ->select("TIMESTAMPDIFF(YEAR, fechaNacimiento, CURDATE()) AS edad", FALSE)
                     ->from("f1_usuario AS user")
                     ->join("f1_pais AS pais", "user.idPais = pais.idPais")
-                    ->where("user.puntosTotales >= 0")
+                    //->where("user.puntosTotales >= 0")
                     ->order_by("user.puntosTotales", "DESC");
         
         if($adminOUser == 1):
@@ -168,7 +168,7 @@ class M_consultas extends CI_Model{
             $this->db->where("user.idUsuario", $idUsuario);
         endif;
         
-        if($userName != 0):
+        if($userName !== 0):
             $this->db->where("user.usuario", $userName);
         endif;
         

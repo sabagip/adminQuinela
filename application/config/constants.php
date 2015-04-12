@@ -41,13 +41,22 @@ define("BASE_URL2", "http://localhost/adminQuinela/index.php/");
 define("STYLE_URL", "http://localhost/adminQuinela/application/resources/" );
 define("JS_URL", "http://localhost/adminQuinela/application/resources/js/" );
 define("BOWER_URL", "http://localhost/adminQuinela/application/resources/bower_components/" );
-define("IMG_URL", "http://localhost/QUINIELA-FASTmag/application/resources/img/");
-define("IMGPILOTOS_URL", "http://localhost/QUINIELA-FASTmag/application/resources/img/pilotos/");
-define("IMGPISTAS_URL", "http://localhost/QUINIELA-FASTmag/application/resources/img/gp/");
-define("IMGEXPERTO_URL", "http://localhost/QUINIELA-FASTmag/application/resources/img/expertos/");
-define("IMGESCUDERIA_URL", "http://localhost/QUINIELA-FASTmag/application/resources/img/escuderias/");
+define("IMG_URL", "http://localhost/adminQuinela/application/resources/img/");
+define("IMGPILOTOS_URL", "application/resources/img/pilotos/");
+define("IMGPISTAS_URL", "application/resources/img/gp/");
+define("IMGEXPERTO_URL", "application/resources/img/expertos/");
+define("IMGESCUDERIA_URL", "application/resources/img/escuderias/");
 define("KEY", 'Q3!A#Y)S{qWi8a6:i}f8VJUGM(V(Fy*#}e*$N)DlJ2Q%w{1+/#zd^h6kmv.,gbQ');
 
+
+define("IMGDESTEXPERTO_URL", $_SERVER['DOCUMENT_ROOT'] ."QUINIELA-FASTmag/application/resources/img/expertos/");
+define("IMGORIGTEXPERTO_URL", $_SERVER['DOCUMENT_ROOT']. "adminQuinela/application/resources/img/expertos/");
+
+define("IMGDESTPILOTO_URL", $_SERVER['DOCUMENT_ROOT'] ."QUINIELA-FASTmag/application/resources/img/pilotos/");
+define("IMGORIGTPILOTO_URL", $_SERVER['DOCUMENT_ROOT']. "adminQuinela/application/resources/img/pilotos/");
+
+define("IMGDESTJORNADA_URL", $_SERVER['DOCUMENT_ROOT'] ."QUINIELA-FASTmag/application/resources/img/gp/");
+define("IMGORIGJORNADA_URL", $_SERVER['DOCUMENT_ROOT']. "adminQuinela/application/resources/img/gp/");
 
 define('FBAPPID' , '608278609309133');
 define('FBSECRET' , 'f9b5e28e4109e77e846945d8ff51e96c');
