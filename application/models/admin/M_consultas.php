@@ -114,16 +114,6 @@ class M_consultas extends CI_Model{
         return $query;
     }
     
-    function get_puntajePole(){
-        
-        $this->db
-                ->select("valor")
-                ->from("f1_puntaje")
-                ->where("nombre", "pole");
-        
-        $query = $this->db->get();
-        return (int) $query->result()[0]->valor;
-    }
     
     #Obtiene los usuarios normales o administradores mayores o menores de 18 años
     #$AdminOUser = 1 indica que se devuelvan a los usuarios normales
@@ -243,11 +233,13 @@ class M_consultas extends CI_Model{
         return $query->result();
     }
     
-    function get_tramposo($id){
+    function get_tramposos($fechas){
         $this->db
                     ->select('idUsuario')
                     ->from('registro')
-                    ->where('idRegistro', $id);
+                    ->where("fecha >= '" .date("Y-m-d", $fechas['fechaInicio']) ."'")
+                    ->where("fecha <= '" .date("Y-m-d", $fechas['fechaFinal']) ."'")
+                    ->group_by('idUsuario');
         
         $query = $this->db->get();
         return $query->result();
