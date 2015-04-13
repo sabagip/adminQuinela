@@ -113,4 +113,15 @@ class M_update extends CI_Model{
         }
     }
     
+    function updateDesactivaUsuario($id){
+        $datos = array( 'activo' => 0 );
+        try{
+            $this->db->where('idUsuario', $id);
+            $this->db->update('f1_usuario', $datos);
+            return true;
+        } catch (Exception $ex) {
+            return false;
+        }
+    }
+    
 }

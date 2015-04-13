@@ -47,7 +47,7 @@
                                         .alert("Tu pronóstico a sido guardado.", function(){
                                         alertify.message('OK');
                                     });
-                                   self.location="http://localhost/adminQuinela/index.php/admin/bienvenido";
+                                   self.location="http://localhost/adminQuinela/index.php/admin/tramposos";
                                },
                                error : function(request){
                                    console.log("fail ",  request);

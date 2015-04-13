@@ -42,12 +42,15 @@ define("STYLE_URL", "http://localhost/adminQuinela/application/resources/" );
 define("JS_URL", "http://localhost/adminQuinela/application/resources/js/" );
 define("BOWER_URL", "http://localhost/adminQuinela/application/resources/bower_components/" );
 define("IMG_URL", "http://localhost/adminQuinela/application/resources/img/");
-define("IMGPILOTOS_URL", "http://localhost/adminQuinela/application/resources/img/pilotos/");
-define("IMGPISTAS_URL", "http://localhost/adminQuinela/application/resources/img/gp/");
-define("IMGEXPERTO_URL", "http://localhost/adminQuinela/application/resources/img/expertos/");
+define("IMGPILOTOS_URL", "application/resources/img/pilotos/");
+define("IMGPISTAS_URL", "application/resources/img/gp/");
+define("IMGEXPERTO_URL", "application/resources/img/expertos/");
 define("IMGESCUDERIA_URL", "http://localhost/adminQuinela/application/resources/img/escuderias/");
 define("KEY", 'Q3!A#Y)S{qWi8a6:i}f8VJUGM(V(Fy*#}e*$N)DlJ2Q%w{1+/#zd^h6kmv.,gbQ');
 
+define("BDPRINCIPAL", 'quinelaf1.');
+
+define("IMGPILOTOSRESULTADOS_URL", "http://localhost/adminQuinela/application/resources/img/pilotos/");
 
 define("IMGDESTEXPERTO_URL", $_SERVER['DOCUMENT_ROOT'] ."QUINIELA-FASTmag/application/resources/img/expertos/");
 define("IMGORIGTEXPERTO_URL", $_SERVER['DOCUMENT_ROOT']. "adminQuinela/application/resources/img/expertos/");

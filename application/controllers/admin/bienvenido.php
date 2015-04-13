@@ -20,7 +20,7 @@ class Bienvenido extends CI_Controller {
         $crud = new grocery_CRUD();
         $crud->set_table('f1_usuario');
         $crud->set_subject("Usuario");
-        $crud->columns('nombre', '{nombre}  {apellidoP}', 'apellidoM', 'usuario', 'contrasena', 'email', 'fechaNacimiento', 'sexo', 'idPais', 'puntosTotales');
+        $crud->columns('usuario', 'nombre', '{nombre}  {apellidoP}', 'apellidoM', 'contrasena', 'email', 'fechaNacimiento', 'sexo', 'idPais', 'puntosTotales', 'activo');
 
         $crud->display_as(array(
             'nombre' => 'Nombre(s)',
@@ -29,7 +29,8 @@ class Bienvenido extends CI_Controller {
             'contrasena' => 'Contraseña',
             'email' => 'Correo Electronico',
             'fechaNacimiento' => 'Fecha de Nacimiento',
-            'puntosTotales' => 'Puntos Totales'));
+            'puntosTotales' => 'Puntos Totales',
+            'activo' => 'Usuario Activo'));
 
         $crud->required_fields(
                 '(nombre)', '{nombre}  {apellidoP}', 'contrasena', 'email', 'fechaNacimiento', 'idPais', 'fechaRegistro', 'idPermiso');
@@ -403,6 +404,53 @@ class Bienvenido extends CI_Controller {
         }
         
     }
+    
+    public function tramposos(){
+        if($this->session->userdata['perfil'] == FALSE && $this->session->userdata['perfil'] != enc_encrypt('2', KEY)):
+            redirect(site_url('inicio'));
+        endif;
+        $fechas = $this->fechasJornadaAnterior();
+        $this->db = $this->load->database('default2',true);
+        try{
+            $crud = new Grocery_CRUD();
+            $crud->set_table("registro");
+            $crud->set_subject("tramposos");
+            
+            $crud->display_as(array(
+                                    'idUsuario'     =>  'Nombre de Usuario',
+                                    'movimiento'    =>  'Movimiento',
+                                    'tabla'         =>  'Tabla',
+                                    'activo'        =>  'Activo',
+                                    'fecha'         =>  'Fecha del movimiento'
+                                ));
+            $crud->set_relation('idUsuario', BDPRINCIPAL .'f1_usuario', 'usuario');
+            $crud->where("activo" , 1);
+            $crud->where("fecha >= '" .date("Y-m-d", $fechas['fechaInicio']) ."'");
+            $crud->where("fecha <= '" .date("Y-m-d", $fechas['fechaFinal']) ."' GROUP BY Usuario");
+            
+            
+            
+            $crud->unset_add();
+            $crud->unset_edit();
+            $crud->unset_delete();
+            
+            $crud->add_action('Desactivar Usuario', IMG_URL. "prohibir.jpg", 'admin/bienvenido/desactivaTramposos');
+            $crud->add_action('Comenzar Evaluación', IMG_URL. "prohibir.jpg", 'admin/bienvenido/desactivaTramposos');
+            
+            $output = $crud->render();
+            $output->body = "app/admin/index";
+            $this->load->view('includes/admin/cargaPagina', $output);
+        }
+        catch(Exception $e){
+            show_error($e->getMessage());
+        }
+    }
+    
+    
+    
+    
+    
+    
     /*
      * INICIAN CALLBACKS DE EXPERTOS
      */
@@ -554,5 +602,45 @@ class Bienvenido extends CI_Controller {
     
     function permisoExperto($datos){
         $datos['idPermiso'] = 3;
+    }
+    
+    function fechasJornadaAnterior(){
+        $lastRace = $this->M_consultas->get_lastRace();
+        if(!empty($lastRace)):
+            $lastRace = $lastRace[0];
+            $fechaInicio =  strtotime( "-3 day 01 minutes", strtotime($lastRace->fechaJornada));
+            if($lastRace->nombre == "GP de Mónaco"):
+                        $fechaInicio =  strtotime( "-4 day 01 minutes", strtotime($lastRace->fechaJornada));
+            endif;
+            
+            $fechaFinal = $lastRace->fechaJornada;
+            $data['fechaInicio'] = $fechaInicio;
+            $data['fechaFinal'] = strtotime($fechaFinal);
+            return $data;
+        else:
+            echo "<h1> No hay carreras por evaluar <h1>";
+            die;
+        endif;
+    }
+    
+    
+    function desactivaTramposos($id){
+        $this->db = $this->load->database('default2',true);
+        $usuario = $this->M_consultas->get_tramposo($id);
+        
+        $this->db = $this->load->database('default',true);
+        $usuario = $this->M_update->updateDesactivaUsuario($usuario[0]->idUsuario);
+        if($usuario):
+            $this->tramposos();
+        else:
+            return false;
+        endif;
+        
+        //echo "<pre>"; print_r($usuario); die;
+
+    }
+
+    function evaluaPredicciones(){
+        
     }
 }

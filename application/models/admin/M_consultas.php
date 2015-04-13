@@ -111,7 +111,6 @@ class M_consultas extends CI_Model{
         
         $query = $this->db->get();
         $query = (int) $query->result()[0]->valor;
-        echo "<pre>"; print_r($query); die;
         return $query;
     }
     
@@ -241,6 +240,16 @@ class M_consultas extends CI_Model{
         
         $query = $this->db->get();
         //echo "<pre>"; print_r($this->db->last_query()); die;
+        return $query->result();
+    }
+    
+    function get_tramposo($id){
+        $this->db
+                    ->select('idUsuario')
+                    ->from('registro')
+                    ->where('idRegistro', $id);
+        
+        $query = $this->db->get();
         return $query->result();
     }
 }
