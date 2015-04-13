@@ -45,7 +45,7 @@ define("IMG_URL", "http://localhost/adminQuinela/application/resources/img/");
 define("IMGPILOTOS_URL", "application/resources/img/pilotos/");
 define("IMGPISTAS_URL", "application/resources/img/gp/");
 define("IMGEXPERTO_URL", "application/resources/img/expertos/");
-define("IMGESCUDERIA_URL", "http://localhost/adminQuinela/application/resources/img/escuderias/");
+define("IMGESCUDERIA_URL", "application/resources/img/escuderias/");
 define("KEY", 'Q3!A#Y)S{qWi8a6:i}f8VJUGM(V(Fy*#}e*$N)DlJ2Q%w{1+/#zd^h6kmv.,gbQ');
 
 define("BDPRINCIPAL", 'quinelaf1.');

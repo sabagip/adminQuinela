@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php date_default_timezone_set('America/Mexico_City'); if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Resultados extends CI_Controller {
         

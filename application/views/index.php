@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <title>Quiniela FastMag</title>
+    <title>Pronostica F1</title>
     <meta charset="utf-8">
+    <link rel="icon" href="<?php echo IMG_URL ."fastmag.png"; ?>" type="image/png" />
     <link href="http://fonts.googleapis.com/css?family=Oswald:300,400,700" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="<?php echo STYLE_URL; ?>estilos.css">
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
