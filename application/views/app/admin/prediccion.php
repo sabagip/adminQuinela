@@ -1,5 +1,4 @@
             
-
             <section id="contenido">
                 <div class="contenedor flow-text">
                   <!-- ESTO ES EL POLE POSITION-->
@@ -7,7 +6,7 @@
                       <p style="text-align: center;">DA CLICK SOBRE EL PILOTO QUE CREES QUE OCUPARÁ LA POSICIÓN DE PRIVILEGIO.</p>
                     <ul class="listaPilotos listaPilotosPole">
                         <?php foreach($pilotos as $piloto): $i = 1;?>
-                        <li data-idpiloto="<?php echo enc_encrypt($piloto->idPiloto, KEY);?>"><img src="<?php echo IMGPILOTOS_URL.$piloto->fotografia ?>" alt=""><span class="info">
+                        <li data-idpiloto="<?php echo enc_encrypt($piloto->idPiloto, KEY);?>"><img src="<?php echo IMGPILOTOSRESULTADOS_URL.$piloto->fotografia; ?>" alt=""><span class="info">
                         <h3><?php echo $piloto->nombre . " " .$piloto->apellidoP; ?></h3>
                         <p><?php echo $piloto->escuderia; ?></p></span></li>
                         <?php endforeach;?>
@@ -23,7 +22,7 @@
                       <p style="text-align: center;">DA CLICK SOBRE EL PILOTO QUE CREES QUE SE QUEDARÁ CON LA VUELTA RÁPIDA.</p>
                     <ul class="listaPilotos listaPilotosVueltaRapida">
                       <?php foreach($pilotos as $piloto): $i = 1;?>
-                        <li data-idpiloto="<?php echo enc_encrypt($piloto->idPiloto, KEY);?>"><img src="<?php echo IMGPILOTOS_URL; echo $piloto->fotografia; ?>" alt=""><span class="info">
+                        <li data-idpiloto="<?php echo enc_encrypt($piloto->idPiloto, KEY);?>"><img src="<?php echo IMGPILOTOSRESULTADOS_URL; echo $piloto->fotografia; ?>" alt=""><span class="info">
                         <h3><?php echo $piloto->nombre . " " .$piloto->apellidoP; ?></h3>
                         <p><?php echo $piloto->escuderia; ?></p></span></li>
                         <?php endforeach;?>
@@ -43,7 +42,7 @@
                         <li data-idpiloto="<?php echo enc_encrypt($piloto->idPiloto, KEY);?>">
 
                           <span class="pilotoInfoCondensada">
-                            <img src="<?php echo IMGPILOTOS_URL.$piloto->fotografia ?>" alt=""><span class="info">
+                            <img src="<?php echo IMGPILOTOSRESULTADOS_URL.$piloto->fotografia ?>" alt=""><span class="info">
                             <h3><?php echo $piloto->nombre . " " .$piloto->apellidoP; ?></h3>
                             <p><?php echo $piloto->escuderia; ?></p></span>
                           </span>

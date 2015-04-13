@@ -5,6 +5,8 @@
     <meta charset="utf-8">
     <link href="http://fonts.googleapis.com/css?family=Oswald:300,400,700" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="<?php echo STYLE_URL; ?>estilos.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" />
+        
   </head>
   <body class="home">
     <div class="wrapperHome fadeIn animated">
@@ -53,6 +55,7 @@
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script src="<?php echo BOWER_URL; ?>materialize/dist/js/materialize.min.js"></script>
     <script src="<?php echo JS_URL; ?>Quiniela.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
     <script>
         $(function(){
          $("#submitIniciarSesion").click(function(){

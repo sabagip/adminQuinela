@@ -102,7 +102,7 @@ class M_consultas extends CI_Model{
         return $query->result();
     }
     
-    function get_puntosPorAcierto($lugar){
+    /*function get_puntosPorAcierto($lugar){
         $nombreLugar = $lugar ."lugar";
         $this->db
                 ->select("valor")
@@ -111,20 +111,9 @@ class M_consultas extends CI_Model{
         
         $query = $this->db->get();
         $query = (int) $query->result()[0]->valor;
-        echo "<pre>"; print_r($query); die;
         return $query;
-    }
+    }*/
     
-    function get_puntajePole(){
-        
-        $this->db
-                ->select("valor")
-                ->from("f1_puntaje")
-                ->where("nombre", "pole");
-        
-        $query = $this->db->get();
-        return (int) $query->result()[0]->valor;
-    }
     
     #Obtiene los usuarios normales o administradores mayores o menores de 18 años
     #$AdminOUser = 1 indica que se devuelvan a los usuarios normales
@@ -241,6 +230,18 @@ class M_consultas extends CI_Model{
         
         $query = $this->db->get();
         //echo "<pre>"; print_r($this->db->last_query()); die;
+        return $query->result();
+    }
+    
+    function get_tramposos($fechas){
+        $this->db
+                    ->select('idUsuario')
+                    ->from('registro')
+                    ->where("fecha >= '" .date("Y-m-d", $fechas['fechaInicio']) ."'")
+                    ->where("fecha <= '" .date("Y-m-d", $fechas['fechaFinal']) ."'")
+                    ->group_by('idUsuario');
+        
+        $query = $this->db->get();
         return $query->result();
     }
 }

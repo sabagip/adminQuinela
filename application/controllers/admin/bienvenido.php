@@ -20,7 +20,7 @@ class Bienvenido extends CI_Controller {
         $crud = new grocery_CRUD();
         $crud->set_table('f1_usuario');
         $crud->set_subject("Usuario");
-        $crud->columns('nombre', '{nombre}  {apellidoP}', 'apellidoM', 'usuario', 'contrasena', 'email', 'fechaNacimiento', 'sexo', 'idPais', 'puntosTotales');
+        $crud->columns('usuario', 'nombre', '{nombre}  {apellidoP}', 'apellidoM', 'contrasena', 'email', 'fechaNacimiento', 'sexo', 'idPais', 'puntosTotales', 'activo');
 
         $crud->display_as(array(
             'nombre' => 'Nombre(s)',
@@ -29,7 +29,8 @@ class Bienvenido extends CI_Controller {
             'contrasena' => 'Contraseña',
             'email' => 'Correo Electronico',
             'fechaNacimiento' => 'Fecha de Nacimiento',
-            'puntosTotales' => 'Puntos Totales'));
+            'puntosTotales' => 'Puntos Totales',
+            'activo' => 'Usuario Activo'));
 
         $crud->required_fields(
                 '(nombre)', '{nombre}  {apellidoP}', 'contrasena', 'email', 'fechaNacimiento', 'idPais', 'fechaRegistro', 'idPermiso');
@@ -403,6 +404,53 @@ class Bienvenido extends CI_Controller {
         }
         
     }
+    
+    public function tramposos(){
+        if($this->session->userdata['perfil'] == FALSE && $this->session->userdata['perfil'] != enc_encrypt('2', KEY)):
+            redirect(site_url('inicio'));
+        endif;
+        $fechas = $this->fechasJornadaAnterior();
+        $this->db = $this->load->database('default2',true);
+        try{
+            $crud = new Grocery_CRUD();
+            $crud->set_table("registro");
+            $crud->set_subject("tramposos");
+            
+            $crud->display_as(array(
+                                    'idUsuario'     =>  'Nombre de Usuario',
+                                    'movimiento'    =>  'Movimiento',
+                                    'tabla'         =>  'Tabla',
+                                    'activo'        =>  'Activo',
+                                    'fecha'         =>  'Fecha del movimiento'
+                                ));
+            $crud->set_relation('idUsuario', BDPRINCIPAL .'f1_usuario', 'usuario');
+            $crud->where("activo" , 1);
+            $crud->where("fecha >= '" .date("Y-m-d", $fechas['fechaInicio']) ."'");
+            $crud->where("fecha <= '" .date("Y-m-d", $fechas['fechaFinal']) ."' GROUP BY Usuario");
+            
+            
+            
+            $crud->unset_add();
+            $crud->unset_edit();
+            $crud->unset_delete();
+            
+            $crud->add_action('Desactivar Usuario', IMG_URL. "prohibir.jpg", 'admin/bienvenido/desactivaTramposos');
+            //$crud->add_action('Comenzar Evaluación', IMG_URL. "prohibir.jpg", 'admin/bienvenido/desactivaTramposos');
+            
+            $output = $crud->render();
+            $output->body = "app/admin/index";
+            $this->load->view('includes/admin/cargaPagina', $output);
+        }
+        catch(Exception $e){
+            show_error($e->getMessage());
+        }
+    }
+    
+    
+    
+    
+    
+    
     /*
      * INICIAN CALLBACKS DE EXPERTOS
      */
@@ -554,5 +602,134 @@ class Bienvenido extends CI_Controller {
     
     function permisoExperto($datos){
         $datos['idPermiso'] = 3;
+    }
+    
+    function fechasJornadaAnterior(){
+        $lastRace = $this->M_consultas->get_lastRace();
+        if(!empty($lastRace)):
+            $lastRace = $lastRace[0];
+            $fechaInicio =  strtotime( "-3 day 01 minutes", strtotime($lastRace->fechaJornada));
+            if($lastRace->nombre == "GP de Mónaco"):
+                        $fechaInicio =  strtotime( "-4 day 01 minutes", strtotime($lastRace->fechaJornada));
+            endif;
+            
+            $fechaFinal = $lastRace->fechaJornada;
+            $data['fechaInicio'] = $fechaInicio;
+            $data['fechaFinal'] = strtotime($fechaFinal);
+            return $data;
+        else:
+            echo "<h1> No hay carreras por evaluar <h1>";
+            die;
+        endif;
+    }
+    
+    
+    function desactivaTramposos(){
+        $fechas = $this->fechasJornadaAnterior();
+        $this->db = $this->load->database('default2',true);
+        $tramposos = $this->M_consultas->get_tramposos($fechas);
+        
+        //echo "<pre>"; print_r($tramposos); die;
+        $this->db = $this->load->database('default',true);
+        $usuario = $this->M_update->updateDesactivaUsuario($fechas, $tramposos);
+        if($usuario):
+            $this->evaluaPredicciones();
+        else:
+            return false;
+        endif;
+        
+        //echo "<pre>"; print_r($usuario); die;
+
+    }
+
+    function evaluaPredicciones(){
+        $jornada = $this->M_consultas->get_lastRace();
+        $jornada = $jornada[0]->idJornada;
+        $resultadoVuelta = $this->M_consultas->get_resultadoVuelta($jornada);
+        
+        if(!empty($resultadoVuelta)):
+            $resultadoTop = $this->M_consultas->get_resultadoTopTen($jornada);
+            $resultadoPole = $this->M_consultas->get_resultadoPole($jornada);
+            
+            $apuestaPole = $this->M_consultas->get_userApuestaActivaPole($jornada);
+            $apuestaVuelta = $this->M_consultas->get_userApuestaActivaVuelta($jornada);
+            $apuestaTop = $this->M_consultas->get_userApuestaActivaTopTen($jornada);
+            
+            $this->db->trans_start();
+                $this->puntuaPole($apuestaPole, $resultadoPole);
+                $this->puntuaVuelta($apuestaVuelta, $resultadoVuelta);
+                $this->puntuaTopTen($apuestaTop, $resultadoTop);
+            $this->db->trans_complete();
+            
+            if($this->db->trans_status() === TRUE):
+                echo "Puntajes actualizados";
+                sleep(3);
+                $this->admin();
+            else:
+                echo "Error, Intentando de nuevo";
+                sleep(3);
+                $this->evaluaPredicciones();
+            endif;
+        endif;
+        //echo "<pre>"; print_r("vacio") ; die;
+    }
+    
+    function puntuaPole($apuestas, $resultados){
+        $puntajes = $this->M_consultas->get_puntaje("pole");
+        foreach ($apuestas as $apuesta):
+            if($apuesta->idPiloto == $resultados[0]->idPiloto):
+                $this->M_update->updatePuntajePole($apuesta->idUsuario, $puntajes[0]->valor);
+            endif;
+        endforeach;    
+    }
+    
+    function puntuaVuelta($apuestas, $resultados){
+        $puntajes = $this->M_consultas->get_puntaje("vueltaRapida");
+        
+        foreach ($apuestas as $apuesta):
+            if($apuesta->idPiloto == $resultados[0]->idPiloto):
+                $this->M_update->updatePuntajeVuelta($apuesta->idUsuario, $puntajes[0]->valor);
+            endif;
+        endforeach;
+        
+    }
+    
+    function puntuaTopTen($apuestas, $resultados){
+        $puntaje['5oMas'] = $this->M_consultas->get_puntaje("5oMas");
+        $puntaje['perfecto'] = $this->M_consultas->get_puntaje("perfecta");
+        
+        $posiciones = array(
+                                'First', 'Second', 'Third', 'Four', 'Five',
+                                'Six', 'Seven', 'Eigth', 'Nine', 'Ten'
+                                );
+        for($x = 1; $x<=10; $x++):
+            $puntaje[$x-1] = $this->M_consultas->get_puntaje($x . "lugar");
+        endfor;
+        /*echo "<pre>"; print_r($puntaje); echo "</pre>";
+        echo "<pre>"; print_r($posiciones); echo "</pre>";
+        echo "<pre>"; print_r($resultados); echo "</pre>";
+        echo "<pre>"; print_r($apuestas); die;*/
+        foreach ($apuestas as $apuesta):
+            $aciertos = 0;
+            $valor = 0;
+            for($x = 0; $x < 10; $x++):
+                $clave = "idPilot" . $posiciones[$x];
+                if($apuesta->$clave == $resultados[0]->$clave):
+                    $aciertos += 1;
+                    $valor += $puntaje[$x][0]->valor;
+                endif;
+            endfor;
+            
+            if($aciertos >= 5 && $aciertos < 10):
+                $valor += $puntaje['5oMas'][0]->valor;
+            endif;
+            
+            if($aciertos == 10):
+                $valor = $puntaje['perfecto'][0]->valor;
+            endif;
+            
+            $this->M_update->updatePuntajeTop($apuesta->idUsuario, $valor);
+        endforeach;
+        
     }
 }

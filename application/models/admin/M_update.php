@@ -113,4 +113,70 @@ class M_update extends CI_Model{
         }
     }
     
+    function updateDesactivaUsuario($fechas, $tramposos){
+        $datos = array( 'activo' => 0 );
+        
+        
+        try{
+            $this->db->trans_start();
+            foreach($tramposos as $tramposo):
+                $this->db->where("idUsuario", $tramposo->idUsuario);
+                $this->db->update("f1_usuario", $datos);
+            endforeach;
+            
+            $this->db->trans_complete();
+            
+            if($this->db->trans_status() === TRUE):
+                return true;
+            endif;
+        } catch (Exception $ex) {
+            return false;
+        }
+        
+        
+        /*$datos = array( 'activo' => 0 );
+        try{
+            $this->db->where('idUsuario', $id);
+            $this->db->update('f1_usuario', $datos);
+            return true;
+        } catch (Exception $ex) {
+            return false;
+        }*/
+    }
+    
+    function updatePuntajePole($idUsuario, $puntaje){
+        $datos = array('puntaje' => $puntaje);
+        
+        try{
+            $this->db->where('idUsuario', $idUsuario);
+            $this->db->update('f1_apuesta_pole', $datos);
+            return TRUE;
+        } catch (Exception $ex) {
+            return FALSE;
+        }
+    }
+    
+    function updatePuntajeVuelta($idUsuario, $puntaje){
+        $datos = array('puntaje' => $puntaje);
+        try{
+            $this->db->where('idUsuario', $idUsuario);
+            $this->db->update('f1_apuesta_vuelta', $datos);
+            return TRUE;
+        } catch (Exception $ex) {
+            return FALSE;
+        }
+    }
+    
+    function updatePuntajeTop($idUsuario, $puntaje){
+        $datos = array('puntaje' => $puntaje);
+        
+        try{
+            $this->db->where('idUsuario', $idUsuario);
+            $this->db->update('f1_apuesta_top_ten', $datos);
+            return TRUE;
+        } catch (Exception $ex) {
+            return FALSE;
+        }
+    }
+    
 }
