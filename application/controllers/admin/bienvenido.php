@@ -1,4 +1,4 @@
-<?php
+<?php date_default_timezone_set('America/Mexico_City');
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 class Bienvenido extends CI_Controller {
