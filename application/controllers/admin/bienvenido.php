@@ -649,7 +649,7 @@ class Bienvenido extends CI_Controller {
             else:
                 echo "Error, Intentando de nuevo....";
                 sleep(3);
-                $this->evaluaPredicciones();
+                redirect('admin/bienvenido/index');
             endif;
         endif;
         //echo "<pre>"; print_r("vacio") ; die;
