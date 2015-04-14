@@ -12,8 +12,9 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/wamp/www/adminQuinela/application/views/app/admin/prediccion.php</file>
-            <file>file:/C:/wamp/www/adminQuinela/application/config/constants.php</file>
+            <file>file:/C:/wamp/www/adminQuinela/application/resources/js/quiniela.app.js</file>
+            <file>file:/C:/wamp/www/adminQuinela/application/controllers/admin/bienvenido.php</file>
+            <file>file:/C:/wamp/www/adminQuinela/application/models/admin/m_consultas.php</file>
         </group>
     </open-files>
 </project-private>
