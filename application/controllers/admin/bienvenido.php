@@ -715,20 +715,32 @@ class Bienvenido extends CI_Controller {
     }
     
     public function verTramposos(){
-        $fechas = $this->fechasJornadaAnterior();
-        $lastRace = $this->M_consultas->get_lastRace();
+        $crud = new Grocery_CRUD();
+        $crud->set_table("f1_apuesta_pole");
+        $crud->set_subject("tramposos");
         
-        $this->db = $this->load->database('default2',true);
-        $tramposos = $this->M_consultas->get_tramposos($fechas);
+        $crud->add_fields('trampaApuesta');
+        $crud->display_as(array(
+                                'idUsuario'     =>  'Nombre de Usuario',
+                                'idJornada'    =>  'Nombre del Gran Premio',
+                                'trampaApuesta'    =>  'Faltas'
+                            ));
         
-        //echo "<pre>"; print_r($lastRace); die;
-        //echo "<pre>"; print_r($tramposos); die;
-        $this->db = $this->load->database('default',true);
-        $usuario = $this->M_update->updateAgregaTrampa($lastRace[0]->idJornada, $tramposos);
-        if($usuario):
-            $this->evaluaPredicciones();
-        else:
-            return false;
-        endif;
+        
+        $crud->set_relation('idUsuario', 'f1_usuario', 'usuario');
+        $crud->set_relation('idJornada', 'f1_pistas', 'nombre');
+        //$crud->set_relation('idPista', 'f1_pistas', 'nombre');
+        $crud->where("trampaApuesta >= 1");
+        
+        //echo "<pre>"; print_r($crud); die;
+        $crud->unset_add();
+        $crud->unset_edit();
+        $crud->unset_delete();
+
+        //$crud->add_action('Desactivar Usuario', IMG_URL. "prohibir.jpg", 'admin/bienvenido/agregaTrampa');
+
+        $output = $crud->render();
+        $output->body = "app/admin/index";
+        $this->load->view('includes/admin/cargaPagina', $output);
     }
 }

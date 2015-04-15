@@ -12,7 +12,7 @@
                     <a title="Podio" href="<?php echo base_url() ."index.php/admin/bienvenido/podio"; ?>" class="big">Podio</a>
                     <a title="Añadir Resultado" href="<?php echo base_url() ."index.php/admin/bienvenido/anadeResultado"; ?>" class="big">Añadir Resultado</a>
                     <a title="Añadir Resultado" href="<?php echo base_url() ."index.php/admin/bienvenido/expertos"; ?>" class="big">Expertos</a>
-                    <<a title="Tramposos" href="<?php echo base_url() ."index.php/admin/bienvenido/verTramposos"; ?>" class="big">Tramposos</a>>
+                    <a title="Tramposos" href="<?php echo base_url() ."index.php/admin/bienvenido/verTramposos"; ?>" class="big">Tramposos</a>
                     <!--<a title="Da click para comenzar a puntuar las predicciones" href="<?php //echo base_url() ."index.php/admin/bienvenido/evaluaPredicciones"; ?>" class="big">Evaluar Predicciones</a>-->
                     <a href="<?php echo base_url('index.php/index/logout_ci')?>" class="big">Cerrar Sesión</a>
                 </div>
