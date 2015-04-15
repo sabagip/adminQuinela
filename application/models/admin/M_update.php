@@ -113,19 +113,29 @@ class M_update extends CI_Model{
         }
     }
     
-    function updateDesactivaUsuario($fechas, $tramposos){
-        $datos = array( 'activo' => 0 );
+    function updateAgregaTrampa($idJornada, $tramposos){
+        $datos = array( 'trampaApuesta' => 1 );
         
         
         try{
             $this->db->trans_start();
             foreach($tramposos as $tramposo):
                 $this->db->where("idUsuario", $tramposo->idUsuario);
-                $this->db->update("f1_usuario", $datos);
+                $this->db->where("idJornada", $idJornada);
+                $this->db->update("f1_apuesta_pole", $datos);
+                
+                $this->db->where("idUsuario", $tramposo->idUsuario);
+                $this->db->where("idJornada", $idJornada);
+                $this->db->update("f1_apuesta_vuelta", $datos);
+                
+                $this->db->where("idUsuario", $tramposo->idUsuario);
+                $this->db->where("idJornada", $idJornada);
+                $this->db->update("f1_apuesta_top_ten", $datos);
+            
             endforeach;
             
             $this->db->trans_complete();
-            
+            die;
             if($this->db->trans_status() === TRUE):
                 return true;
             endif;

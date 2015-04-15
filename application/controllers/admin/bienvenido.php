@@ -403,15 +403,12 @@ class Bienvenido extends CI_Controller {
                 $crud->where("activo" , 1);
                 $crud->where("fecha >= '" .date("Y-m-d", $fechas['fechaInicio']) ."'");
                 $crud->where("fecha <= '" .date("Y-m-d", $fechas['fechaFinal']) ."' GROUP BY Usuario");
-
-
-
+                
                 $crud->unset_add();
                 $crud->unset_edit();
                 $crud->unset_delete();
 
-                $crud->add_action('Desactivar Usuario', IMG_URL. "prohibir.jpg", 'admin/bienvenido/desactivaTramposos');
-                //$crud->add_action('Comenzar Evaluación', IMG_URL. "prohibir.jpg", 'admin/bienvenido/desactivaTramposos');
+                $crud->add_action('Desactivar Usuario', IMG_URL. "prohibir.jpg", 'admin/bienvenido/agregaTrampa');
 
                 $output = $crud->render();
                 $output->body = "app/admin/index";
@@ -603,14 +600,17 @@ class Bienvenido extends CI_Controller {
     }
     
     
-    function desactivaTramposos(){
+    function agregaTrampa(){
         $fechas = $this->fechasJornadaAnterior();
+        $lastRace = $this->M_consultas->get_lastRace();
+        
         $this->db = $this->load->database('default2',true);
         $tramposos = $this->M_consultas->get_tramposos($fechas);
         
+        //echo "<pre>"; print_r($lastRace); die;
         //echo "<pre>"; print_r($tramposos); die;
         $this->db = $this->load->database('default',true);
-        $usuario = $this->M_update->updateDesactivaUsuario($fechas, $tramposos);
+        $usuario = $this->M_update->updateAgregaTrampa($lastRace[0]->idJornada, $tramposos);
         if($usuario):
             $this->evaluaPredicciones();
         else:
@@ -712,5 +712,23 @@ class Bienvenido extends CI_Controller {
             $this->M_update->updatePuntajeTop($apuesta->idUsuario, $valor);
         endforeach;
         
+    }
+    
+    public function verTramposos(){
+        $fechas = $this->fechasJornadaAnterior();
+        $lastRace = $this->M_consultas->get_lastRace();
+        
+        $this->db = $this->load->database('default2',true);
+        $tramposos = $this->M_consultas->get_tramposos($fechas);
+        
+        //echo "<pre>"; print_r($lastRace); die;
+        //echo "<pre>"; print_r($tramposos); die;
+        $this->db = $this->load->database('default',true);
+        $usuario = $this->M_update->updateAgregaTrampa($lastRace[0]->idJornada, $tramposos);
+        if($usuario):
+            $this->evaluaPredicciones();
+        else:
+            return false;
+        endif;
     }
 }

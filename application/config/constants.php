@@ -48,7 +48,7 @@ define("IMGEXPERTO_URL", "application/resources/img/expertos/");
 define("IMGESCUDERIA_URL", "application/resources/img/escuderias/");
 define("KEY", 'Q3!A#Y)S{qWi8a6:i}f8VJUGM(V(Fy*#}e*$N)DlJ2Q%w{1+/#zd^h6kmv.,gbQ');
 
-define("BDPRINCIPAL", 'quinelaf1.');
+define("BDPRINCIPAL", 'pronostf1.');
 
 define("IMGPILOTOSRESULTADOS_URL", "http://localhost/adminQuinela/application/resources/img/pilotos/");
 
