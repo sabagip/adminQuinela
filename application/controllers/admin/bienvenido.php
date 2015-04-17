@@ -382,12 +382,10 @@ class Bienvenido extends CI_Controller {
                 $crud = new Grocery_CRUD();
                 $crud->set_table("registro");
                 $crud->set_subject("tramposos");
+                $crud->columns('idUsuario', 'fecha');
 
                 $crud->display_as(array(
                                         'idUsuario'     =>  'Nombre de Usuario',
-                                        'movimiento'    =>  'Movimiento',
-                                        'tabla'         =>  'Tabla',
-                                        'activo'        =>  'Activo',
                                         'fecha'         =>  'Fecha del movimiento'
                                     ));
                 $crud->set_relation('idUsuario', BDPRINCIPAL .'f1_usuario', 'usuario');
@@ -399,7 +397,7 @@ class Bienvenido extends CI_Controller {
                 $crud->unset_edit();
                 $crud->unset_delete();
 
-                $crud->add_action('Desactivar Usuario', IMG_URL. "prohibir.jpg", 'admin/bienvenido/agregaTrampa');
+                $crud->add_action('Agregar trampa', IMG_URL. "prohibir.jpg", 'admin/bienvenido/agregaTrampa');
 
                 $output = $crud->render();
                 $output->body = "app/admin/index";
@@ -603,7 +601,7 @@ class Bienvenido extends CI_Controller {
         $this->db = $this->load->database('default',true);
         $usuario = $this->M_update->updateAgregaTrampa($lastRace[0]->idJornada, $tramposos);
         if($usuario):
-            $this->evaluaPredicciones();
+            redirect('admin/bienvenido/verTramposos');
         else:
             return false;
         endif;
@@ -636,7 +634,7 @@ class Bienvenido extends CI_Controller {
             if($this->db->trans_status() === TRUE):
                 echo "Puntajes actualizados";
                 sleep(3);
-                $this->admin();
+                redirect('admin/bienvenido/tramposos');
             else:
                 echo "Error, Intentando de nuevo....";
                 sleep(3);
@@ -706,6 +704,7 @@ class Bienvenido extends CI_Controller {
     }
     
     public function verTramposos(){
+        
         $crud = new Grocery_CRUD();
         $crud->set_table("f1_apuesta_pole");
         $crud->set_subject("tramposos");
@@ -719,24 +718,43 @@ class Bienvenido extends CI_Controller {
         
         $crud->set_relation('idUsuario', 'f1_usuario', 'usuario');
         //$crud->set_relation('idJornada', 'f1_pistas', 'nombre');
-        $crud->where("trampaApuesta >= 1");
+        $crud->where('activo', 1);
+        $crud->where("trampaApuesta >= 1 GROUP BY usuario");
+        
+        $crud->callback_column('total', array($this, 'totalTrampas'));
         
         $crud->unset_fields('idPiloto', 'idJornada' );
         //echo "<pre>"; print_r($crud); die;
         $crud->unset_add();
         $crud->unset_edit();
         $crud->unset_delete();
-
-        //$crud->add_action('Desactivar Usuario', IMG_URL. "prohibir.jpg", 'admin/bienvenido/agregaTrampa');
+        
+        //echo "<pre>"; print_r($crud->count); die;
+        $crud->add_action('Desactivar Usuario', IMG_URL. "prohibir.jpg", 'admin/bienvenido/desactivaTramposo');
 
         $output = $crud->render();
         
-        $output->total = $this->totalTrampas();
         $output->body = "app/admin/index";
         $this->load->view('includes/admin/cargaPagina', $output);
     }
     
-    function totalTrampas(){
-        return array(0,1,2,3,4,5,6);
+    function totalTrampas($datos, $renglon){
+        //echo "<pre>"; print_r($renglon); echo "</pre>"; die;
+
+        $trampa = $this->M_consultas->get_totalTrampas($renglon->idUsuario);
+        return $trampa[0]->total; 
+        
     }
+    
+    function desactivaTramposo($idApuesta){
+        //echo "<pre>"; print_r($idApuesta); echo "</pre>";die;
+        
+        $usuario = $this->M_consultas->get_idUsuarioPorApuestaPole($idApuesta);
+        
+        $result = $this->M_update->updateDesactivaTramposo($usuario[0]->idUsuario);
+        
+        $this->verTramposos();
+    
+    }
+    
 }

@@ -244,5 +244,25 @@ class M_consultas extends CI_Model{
         $query = $this->db->get();
         return $query->result();
     }
+    
+    function get_totalTrampas($idUsuario){
+        $this->db
+                    ->select('COUNT(trampaApuesta) as total')
+                    ->from('f1_apuesta_pole')
+                    ->where('idUsuario', $idUsuario);
+        
+        $query = $this->db->get();
+        return $query->result();
+    }
+    
+    function get_idUsuarioPorApuestaPole($idApuesta){
+        $this->db
+                    ->select('idUsuario')
+                    ->from('f1_apuesta_pole')
+                    ->where('idApuestaPole', $idApuesta);
+        
+        $query = $this->db->get();
+        return $query->result();
+    }
    
 }
