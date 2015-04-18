@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+    <?php date_default_timezone_set('America/Mexico_City'); if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once(APPPATH.'libraries/Sanitize.php');
 class Prediccion extends CI_Controller {
@@ -83,12 +83,12 @@ class Prediccion extends CI_Controller {
             $this->saveTopTen($top, TRUE);
             $this->db->trans_complete();
             if ($this->db->trans_status() === FALSE):
-                echo FALSE; die;
+                echo FALSE;
                 // genera un error... o usa la función log_message() para guardar un registro del error
             endif;
             
             if ($this->db->trans_status() === TRUE):
-                echo TRUE; die;
+                echo TRUE;
                 // genera un error... o usa la función log_message() para guardar un registro del error
             endif;
         }

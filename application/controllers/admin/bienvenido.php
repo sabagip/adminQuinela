@@ -1,10 +1,7 @@
-<?php
-
+<?php date_default_timezone_set('America/Mexico_City');
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
-
 class Bienvenido extends CI_Controller {
-
     public function __construct() {
         parent::__construct();
         // Your own constructor code
@@ -12,7 +9,6 @@ class Bienvenido extends CI_Controller {
                 
         $this->load->model(array("admin/M_consultas", "admin/M_insert", "admin/M_update"));
     }
-
     public function index() {
         if ($this->session->userdata('perfil') == FALSE || $this->session->userdata('perfil') != enc_encrypt('2', KEY)):
             redirect(site_url('index'));
@@ -21,7 +17,6 @@ class Bienvenido extends CI_Controller {
         $crud->set_table('f1_usuario');
         $crud->set_subject("Usuario");
         $crud->columns('usuario', 'nombre', '{nombre}  {apellidoP}', 'apellidoM', 'contrasena', 'email', 'fechaNacimiento', 'sexo', 'idPais', 'puntosTotales', 'activo');
-
         $crud->display_as(array(
             'nombre' => 'Nombre(s)',
             '{nombre}  {apellidoP}' => 'Apellido Paterno',
@@ -31,7 +26,6 @@ class Bienvenido extends CI_Controller {
             'fechaNacimiento' => 'Fecha de Nacimiento',
             'puntosTotales' => 'Puntos Totales',
             'activo' => 'Usuario Activo'));
-
         $crud->required_fields(
                 '(nombre)', '{nombre}  {apellidoP}', 'contrasena', 'email', 'fechaNacimiento', 'idPais', 'fechaRegistro', 'idPermiso');
         
@@ -43,7 +37,6 @@ class Bienvenido extends CI_Controller {
         
         $crud->field_type('idPermiso','dropdown',
                                 array( "1"  => "Usuario Normal"));
-
         $crud->where('idPermiso', 1);
         $crud->unset_fields('fotografia', 'puntosTotales', 'facebook', 'twitter', 'google');
         $crud->set_relation("idPais", "f1_pais", "nombre");
@@ -57,7 +50,6 @@ class Bienvenido extends CI_Controller {
         $this->load->view('includes/admin/cargaPagina', $output);
         //$this->load->view('app/admin/index', $output);
     }
-
     public function admin() {
         if ($this->session->userdata('perfil') == FALSE || $this->session->userdata('perfil') != enc_encrypt('2', KEY)):
             redirect(site_url('inicio'));
@@ -77,7 +69,6 @@ class Bienvenido extends CI_Controller {
                 'telefonoCel' => 'Télefono Celular',
                 'fechaNacimiento' => 'Fecha de Nacimiento',
                 'idPais' => 'Pais'));
-
             $crud->where("idPermiso", 2);
             $crud->unset_fields('fotografia');
             
@@ -88,7 +79,6 @@ class Bienvenido extends CI_Controller {
                                 array( "2"  => "Administrador"));
             
             $crud->set_relation("idPais", "f1_pais", "nombre");
-
             $crud->required_fields(
                     '(nombre)', '{nombre}  {apellidoP}', 'contrasena', 'email', 'telefonoCel', 'fechaNacimiento', 'pais', 'idPermiso');
             
@@ -100,7 +90,6 @@ class Bienvenido extends CI_Controller {
             $output = $crud->render();
             //echo "<pre>"; print_r($output); die;
             $output->body = "app/admin/index";
-
             $this->load->view('includes/admin/cargaPagina', $output);
         } catch (Exception $e) {
             show_error($e->getMessage());
@@ -114,32 +103,26 @@ class Bienvenido extends CI_Controller {
     
     
     
-
     public function jornadas() {
         if ($this->session->userdata('perfil') == FALSE || $this->session->userdata('perfil') != enc_encrypt('2', KEY)):
             redirect(site_url('inicio'));
         endif;
         $crud = new Grocery_CRUD();
-
         $crud->set_table('f1_jornada');
-
         $crud->display_as(array(
             'fechaJornada' => 'Día del Grand Prix',
             'idPista' => 'Nombre del evento',
         ));
-
         $crud->required_fields('fechaJornada', 'idPista');
         $crud->set_relation('idPista', "f1_pistas", 'nombre');
         
         $crud->callback_before_update(array($this,'actualizaImagenGP'));
         $crud->callback_before_insert(array($this,'insertaImagenGP'));
         $crud->callback_before_delete(array($this,'borraImagenGP'));
-
         $output = $crud->render();
         $output->body = "app/admin/index";
         $this->load->view('includes/admin/cargaPagina', $output);
     }
-
     public function pista() {
         if($this->session->userdata['perfil'] == FALSE && $this->session->userdata['perfil'] != enc_encrypt('2', KEY)):
             redirect(site_url('inicio'));
@@ -153,12 +136,9 @@ class Bienvenido extends CI_Controller {
                                     'nombre'    =>  'Nombre del evento',
                                     'idPais'    =>  'Pais',
                                     'longitud'  =>  'Longitud (m)'));
-
             $crud->required_fields('nombre', 'idPais', 'longitud');
-
             $crud->set_relation('idPais', 'f1_pais', 'nombre');
             $crud->set_field_upload('fotografia', IMGPISTAS_URL);
-
             $output = $crud->render();
             $output->body = "app/admin/index";
             $this->load->view('includes/admin/cargaPagina', $output);
@@ -166,7 +146,6 @@ class Bienvenido extends CI_Controller {
         catch(Exception $e){
             show_error($e->getMessage());
         }
-
     }
     
     public function pilotos() {
@@ -185,7 +164,6 @@ class Bienvenido extends CI_Controller {
                                     'idPais'        =>  'Pais',
                                     'idEscuderia'   =>  'Escuderia',
                                     'fotografia'    =>  'Fotografía'));
-
             $crud->required_fields('nombre', 'idPais', '{nombre}  {apellidoP}', 'idEscuderia', 'fotografia');
             
             $crud->set_relation('idPais', 'f1_pais', 'nombre');
@@ -217,7 +195,6 @@ class Bienvenido extends CI_Controller {
             $crud->display_as(array(
                                     'nombre'        =>  'Nombre',
                                     'logo'          =>  'Logotipo'));
-
             $crud->required_fields('nombre', 'logo');
             
             $crud->set_field_upload('logo', IMGESCUDERIA_URL);
@@ -263,7 +240,6 @@ class Bienvenido extends CI_Controller {
                                     'idPilotTwenty'                 =>  'Veinteavo',
                                     'idJornada'                     =>  'Fecha del Evento'    
                 ));
-
             $crud->required_fields('idPilotFirst', 'idPilotSecond', 'idPilotThird', 'idPilotFour', 
                                     'idPilotFive', 'idPilotSix', 'idPilotSeven', 'idPilotEigth', 'idPilotNine', 
                                     'idPilotTen', 'idPilotEleven', 'idPilotTwelve', 'idPilotThirteen', 
@@ -278,17 +254,8 @@ class Bienvenido extends CI_Controller {
             $crud->set_relation('idPilotSeven',         'f1_piloto', '{nombre}  {apellidoP}'); 
             $crud->set_relation('idPilotEigth',         'f1_piloto', '{nombre}  {apellidoP}'); 
             $crud->set_relation('idPilotNine',          'f1_piloto', '{nombre}  {apellidoP}'); 
-            $crud->set_relation('idPilotTen',           'f1_piloto', '{nombre}  {apellidoP}'); 
-            $crud->set_relation('idPilotEleven',        'f1_piloto', '{nombre}  {apellidoP}'); 
-            $crud->set_relation('idPilotTwelve',        'f1_piloto', '{nombre}  {apellidoP}');
-            $crud->set_relation('idPilotThirteen',      'f1_piloto', '{nombre}  {apellidoP}'); 
-            $crud->set_relation('idPilotFourteen',      'f1_piloto', '{nombre}  {apellidoP}'); 
-            $crud->set_relation('idPilotFiveteen',      'f1_piloto', '{nombre}  {apellidoP}'); 
-            $crud->set_relation('idPilotSixteen',       'f1_piloto', '{nombre}  {apellidoP}'); 
-            $crud->set_relation('idPilotSeventeen',     'f1_piloto', '{nombre}  {apellidoP}');
-            $crud->set_relation('idPilotEighteen',      'f1_piloto', '{nombre}  {apellidoP}');
+            $crud->set_relation('idPilotTen',           'f1_piloto', '{nombre}  {apellidoP}');
             $crud->set_relation('idJornada',            'f1_jornada', 'fechaJornada');
-            $crud->unset_fields(array ('idPilotNineteen', 'idPilotTwenty'));
             $this->grocery_crud->callback_column('idJornada', array($this,'_formatea_acceso'));
             $output = $crud->render();
             $output->body = "app/admin/index";
@@ -322,12 +289,10 @@ class Bienvenido extends CI_Controller {
     
     function _formatea_acceso($value) {
         $acceso_formateado = null;
-
         if (!is_null($value)) {
             $fecha_unix    = human_to_unix($value);
             $acceso_formateado   = mdate('%d/%m/%Y', $fecha_unix);
         }
-
         return $acceso_formateado;
     }
     
@@ -370,7 +335,6 @@ class Bienvenido extends CI_Controller {
                                     'activo'            =>  'Activo',
                                     
                 ));
-
             $crud->required_fields('nombre', 'apellidoP', 'usuario', 'contrasena', 
                                     'email', 'fechaNacimiento', 'sexo', 'idPais', 
                                     'fotografia', 'activo', 'idPermiso');
@@ -411,39 +375,40 @@ class Bienvenido extends CI_Controller {
         endif;
         $fechas = $this->fechasJornadaAnterior();
         $this->db = $this->load->database('default2',true);
-        try{
-            $crud = new Grocery_CRUD();
-            $crud->set_table("registro");
-            $crud->set_subject("tramposos");
-            
-            $crud->display_as(array(
-                                    'idUsuario'     =>  'Nombre de Usuario',
-                                    'movimiento'    =>  'Movimiento',
-                                    'tabla'         =>  'Tabla',
-                                    'activo'        =>  'Activo',
-                                    'fecha'         =>  'Fecha del movimiento'
-                                ));
-            $crud->set_relation('idUsuario', BDPRINCIPAL .'f1_usuario', 'usuario');
-            $crud->where("activo" , 1);
-            $crud->where("fecha >= '" .date("Y-m-d", $fechas['fechaInicio']) ."'");
-            $crud->where("fecha <= '" .date("Y-m-d", $fechas['fechaFinal']) ."' GROUP BY Usuario");
-            
-            
-            
-            $crud->unset_add();
-            $crud->unset_edit();
-            $crud->unset_delete();
-            
-            $crud->add_action('Desactivar Usuario', IMG_URL. "prohibir.jpg", 'admin/bienvenido/desactivaTramposos');
-            //$crud->add_action('Comenzar Evaluación', IMG_URL. "prohibir.jpg", 'admin/bienvenido/desactivaTramposos');
-            
-            $output = $crud->render();
-            $output->body = "app/admin/index";
-            $this->load->view('includes/admin/cargaPagina', $output);
-        }
-        catch(Exception $e){
-            show_error($e->getMessage());
-        }
+        $tramposos = $this->M_consultas->get_tramposos($fechas);
+        
+        if(!empty($tramposos)):
+            try{
+                $crud = new Grocery_CRUD();
+                $crud->set_table("registro");
+                $crud->set_subject("tramposos");
+                $crud->columns('idUsuario', 'fecha');
+
+                $crud->display_as(array(
+                                        'idUsuario'     =>  'Nombre de Usuario',
+                                        'fecha'         =>  'Fecha del movimiento'
+                                    ));
+                $crud->set_relation('idUsuario', BDPRINCIPAL .'f1_usuario', 'usuario');
+                $crud->where("activo" , 1);
+                $crud->where("fecha >= '" .date("Y-m-d", $fechas['fechaInicio']) ."'");
+                $crud->where("fecha <= '" .date("Y-m-d", $fechas['fechaFinal']) ."' GROUP BY Usuario");
+                
+                $crud->unset_add();
+                $crud->unset_edit();
+                $crud->unset_delete();
+
+                $crud->add_action('Agregar trampa', IMG_URL. "prohibir.jpg", 'admin/bienvenido/agregaTrampa');
+
+                $output = $crud->render();
+                $output->body = "app/admin/index";
+                $this->load->view('includes/admin/cargaPagina', $output);
+            }
+            catch(Exception $e){
+                show_error($e->getMessage());
+            }
+        else:
+            redirect( 'admin/bienvenido/evaluaPredicciones');
+        endif;
     }
     
     
@@ -624,25 +589,27 @@ class Bienvenido extends CI_Controller {
     }
     
     
-    function desactivaTramposos(){
+    function agregaTrampa(){
         $fechas = $this->fechasJornadaAnterior();
+        $lastRace = $this->M_consultas->get_lastRace();
+        
         $this->db = $this->load->database('default2',true);
         $tramposos = $this->M_consultas->get_tramposos($fechas);
         
+        //echo "<pre>"; print_r($lastRace); die;
         //echo "<pre>"; print_r($tramposos); die;
         $this->db = $this->load->database('default',true);
-        $usuario = $this->M_update->updateDesactivaUsuario($fechas, $tramposos);
+        $usuario = $this->M_update->updateAgregaTrampa($lastRace[0]->idJornada, $tramposos);
         if($usuario):
-            $this->evaluaPredicciones();
+            redirect('admin/bienvenido/verTramposos');
         else:
             return false;
         endif;
         
         //echo "<pre>"; print_r($usuario); die;
-
     }
-
     function evaluaPredicciones(){
+        $this->db = $this->load->database('default',true);
         $jornada = $this->M_consultas->get_lastRace();
         $jornada = $jornada[0]->idJornada;
         $resultadoVuelta = $this->M_consultas->get_resultadoVuelta($jornada);
@@ -656,19 +623,22 @@ class Bienvenido extends CI_Controller {
             $apuestaTop = $this->M_consultas->get_userApuestaActivaTopTen($jornada);
             
             $this->db->trans_start();
+                echo "Iniciando Evaluacion en apuestas de posición de privilegio <br>";
                 $this->puntuaPole($apuestaPole, $resultadoPole);
+                echo "Iniciando Evaluacion en apuestas de vuelta rápida <br>";
                 $this->puntuaVuelta($apuestaVuelta, $resultadoVuelta);
+                echo "Iniciando Evaluacion en apuestas de posición de privilegio <br>";
                 $this->puntuaTopTen($apuestaTop, $resultadoTop);
             $this->db->trans_complete();
             
             if($this->db->trans_status() === TRUE):
                 echo "Puntajes actualizados";
                 sleep(3);
-                $this->admin();
+                redirect('admin/bienvenido/tramposos');
             else:
-                echo "Error, Intentando de nuevo";
+                echo "Error, Intentando de nuevo....";
                 sleep(3);
-                $this->evaluaPredicciones();
+                redirect('admin/bienvenido/index');
             endif;
         endif;
         //echo "<pre>"; print_r("vacio") ; die;
@@ -732,4 +702,59 @@ class Bienvenido extends CI_Controller {
         endforeach;
         
     }
+    
+    public function verTramposos(){
+        
+        $crud = new Grocery_CRUD();
+        $crud->set_table("f1_apuesta_pole");
+        $crud->set_subject("tramposos");
+        
+        $crud->columns('idUsuario', 'total');
+        
+        $crud->display_as(array(
+                                    'idUsuario' => 'Usuario',
+                                    'total'     =>  'Total de trampas'
+        ));
+        
+        $crud->set_relation('idUsuario', 'f1_usuario', 'usuario');
+        //$crud->set_relation('idJornada', 'f1_pistas', 'nombre');
+        $crud->where('activo', 1);
+        $crud->where("trampaApuesta >= 1 GROUP BY usuario");
+        
+        $crud->callback_column('total', array($this, 'totalTrampas'));
+        
+        $crud->unset_fields('idPiloto', 'idJornada' );
+        //echo "<pre>"; print_r($crud); die;
+        $crud->unset_add();
+        $crud->unset_edit();
+        $crud->unset_delete();
+        
+        //echo "<pre>"; print_r($crud->count); die;
+        $crud->add_action('Desactivar Usuario', IMG_URL. "prohibir.jpg", 'admin/bienvenido/desactivaTramposo');
+
+        $output = $crud->render();
+        
+        $output->body = "app/admin/index";
+        $this->load->view('includes/admin/cargaPagina', $output);
+    }
+    
+    function totalTrampas($datos, $renglon){
+        //echo "<pre>"; print_r($renglon); echo "</pre>"; die;
+
+        $trampa = $this->M_consultas->get_totalTrampas($renglon->idUsuario);
+        return $trampa[0]->total; 
+        
+    }
+    
+    function desactivaTramposo($idApuesta){
+        //echo "<pre>"; print_r($idApuesta); echo "</pre>";die;
+        
+        $usuario = $this->M_consultas->get_idUsuarioPorApuestaPole($idApuesta);
+        
+        $result = $this->M_update->updateDesactivaTramposo($usuario[0]->idUsuario);
+        
+        $this->verTramposos();
+    
+    }
+    
 }

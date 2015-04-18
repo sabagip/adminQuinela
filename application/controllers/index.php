@@ -343,7 +343,7 @@ class Index extends CI_Controller {
 
         public function logout_ci(){
             $this->session->sess_destroy();
-            redirect(BASE_URL2."index");
+            $this->index();
             //$this->index();
         }
         
