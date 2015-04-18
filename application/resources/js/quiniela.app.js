@@ -47,7 +47,7 @@
                                         .alert("Tu pronóstico a sido guardado.", function(){
                                         alertify.message('OK');
                                     });
-                                   self.location="http://localhost/adminQuinela/index.php/admin/bienvenido/evaluaPredicciones";
+                                   self.location="http://localhost/adminQuinela/index.php/admin/bienvenido/tramposos";
                                },
                                error : function(request){
                                    console.log("fail ",  request);
@@ -91,7 +91,7 @@
                                         .alert("Tu pronóstico a sido actualizado.", function(){
                                         alertify.message('OK');
                                     });
-                                   self.location="http://localhost/adminQuinela/index.php/admin/bienvenido/evaluaPredicciones";
+                                   self.location="http://localhost/adminQuinela/index.php/admin/bienvenido/tramposos";
                                },
                                error : function(request){
                                    console.log("fail ",  request);

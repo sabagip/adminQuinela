@@ -83,12 +83,12 @@ class Prediccion extends CI_Controller {
             $this->saveTopTen($top, TRUE);
             $this->db->trans_complete();
             if ($this->db->trans_status() === FALSE):
-                echo FALSE;
+                echo FALSE; die;
                 // genera un error... o usa la función log_message() para guardar un registro del error
             endif;
             
             if ($this->db->trans_status() === TRUE):
-                echo TRUE;
+                echo TRUE; die;
                 // genera un error... o usa la función log_message() para guardar un registro del error
             endif;
         }
