@@ -409,7 +409,7 @@ class Bienvenido extends CI_Controller {
                 show_error($e->getMessage());
             }
         else:
-            redirect( 'admin/bienvenido/evaluaPredicciones');
+            redirect( 'admin/bienvenido/verTramposos');
         endif;
     }
     
@@ -603,7 +603,7 @@ class Bienvenido extends CI_Controller {
         $this->db = $this->load->database('default',true);
         $usuario = $this->M_update->updateAgregaTrampa($lastRace[0]->idJornada, $tramposos);
         if($usuario):
-            $this->evaluaPredicciones();
+            redirect( 'admin/bienvenido/verTramposos');
         else:
             return false;
         endif;
@@ -615,7 +615,6 @@ class Bienvenido extends CI_Controller {
         $jornada = $this->M_consultas->get_lastRace();
         $jornada = $jornada[0]->idJornada;
         $resultadoVuelta = $this->M_consultas->get_resultadoVuelta($jornada);
-        
         if(!empty($resultadoVuelta)):
             $resultadoTop = $this->M_consultas->get_resultadoTopTen($jornada);
             $resultadoPole = $this->M_consultas->get_resultadoPole($jornada);
@@ -634,14 +633,27 @@ class Bienvenido extends CI_Controller {
             $this->db->trans_complete();
             
             if($this->db->trans_status() === TRUE):
-                echo "Puntajes actualizados";
+                echo "Puntajes actualizados de la jornada <br>";
+                echo "Comenzando a Actualizar el total de puntos por usuario.... <br>";
                 sleep(3);
-                $this->admin();
+                               
+                $result = $this->actualizaPuntajesTotales($jornada);
+                if($result):
+                    echo "Puntajes Actualizados satisfactoriamente";
+                    sleep(5);
+                    redirect('admin/bienvenido/tramposos');
+                else:
+                    echo "Error al actualizar puntajes, reiniciando....";
+                    sleep(5);
+                    redirect('admin/bienvenido/actualizaPuntajesTotales');
+                endif;
             else:
                 echo "Error, Intentando de nuevo....";
                 sleep(3);
-                redirect('admin/bienvenido/index');
+                redirect('admin/bienvenido/evaluaPredicciones');
             endif;
+        else:
+            echo "<pre>"; print_r("vacio") ; die;
         endif;
         //echo "<pre>"; print_r("vacio") ; die;
     }
@@ -701,6 +713,7 @@ class Bienvenido extends CI_Controller {
             endif;
             
             $this->M_update->updatePuntajeTop($apuesta->idUsuario, $valor);
+            
         endforeach;
         
     }
@@ -719,7 +732,9 @@ class Bienvenido extends CI_Controller {
         
         $crud->set_relation('idUsuario', 'f1_usuario', 'usuario');
         //$crud->set_relation('idJornada', 'f1_pistas', 'nombre');
-        $crud->where("trampaApuesta >= 1");
+        $crud->callback_column('total', array($this, 'cuentaTrampas'));
+        $crud->where("activo", 1);
+        $crud->where("trampaApuesta >= 1 GROUP BY usuario");
         
         $crud->unset_fields('idPiloto', 'idJornada' );
         //echo "<pre>"; print_r($crud); die;
@@ -727,16 +742,67 @@ class Bienvenido extends CI_Controller {
         $crud->unset_edit();
         $crud->unset_delete();
 
-        //$crud->add_action('Desactivar Usuario', IMG_URL. "prohibir.jpg", 'admin/bienvenido/agregaTrampa');
+        $crud->add_action('Desactivar Usuario', IMG_URL. "prohibir.jpg", 'admin/bienvenido/desactivaUsuarios');
 
         $output = $crud->render();
         
-        $output->total = $this->totalTrampas();
+        
         $output->body = "app/admin/index";
         $this->load->view('includes/admin/cargaPagina', $output);
     }
     
-    function totalTrampas(){
-        return array(0,1,2,3,4,5,6);
+    function cuentaTrampas($datos, $renglon){
+        //echo "ren<pre>"; print_r($renglon); echo "<pre>"; die;
+        
+        $trampas = $this->M_consultas->get_cuentaTrampas($renglon->idUsuario);
+        return $trampas[0]->trampas;
+    }
+    
+    
+    function sumaPuntaje($arreglo){
+        $total = array();
+        foreach ($arreglo as $arr):
+            $total[] = $arr->puntajePodio + $arr->puntajeVuelta + $arr->puntajePole;
+        endforeach;
+        return $total;
+    }
+
+    function sumaTotal($arreglo){
+        $total = array();
+        foreach ($arreglo as $arr):
+            $total =+ $arr;
+        endforeach;
+        return $total;
+    }
+    
+    function desactivaUsuarios($idApuesta){
+        //echo "d<pre>"; print_r($idApuesta); echo "<pre>"; die;
+        $usuario = $this->M_consultas->get_userApuestaActivaPole(0, $idApuesta);
+        $idUsuario = $usuario[0]->idUsuario;
+        
+        $this->M_update->updateDesactivaUsuario($idUsuario);
+        
+        redirect('admin/bienvenido/verTramposos');
+    }
+    
+    function actualizaPuntajesTotales($jornada){
+        $usuarios = $this->M_consultas->get_userApuestaActivaPole($jornada);
+        
+        $this->db->trans_start();
+            foreach($usuarios as $usuario):
+                $puntajeTotalPole = $this->M_consultas->get_sumaPorApuestas($usuario->idUsuario, 'f1_apuesta_pole');
+                $puntajeTotalVuelta = $this->M_consultas->get_sumaPorApuestas($usuario->idUsuario, 'f1_apuesta_vuelta');
+                $puntajeTotalTopTen = $this->M_consultas->get_sumaPorApuestas($usuario->idUsuario, 'f1_apuesta_top_ten');
+                
+                $total = $puntajeTotalPole[0]->total + $puntajeTotalTopTen[0]->total + $puntajeTotalVuelta[0]->total;
+                $this->M_update->updatePuntajeTotal($total, $usuario->idUsuario);
+            endforeach;
+        $this->db->trans_complete();
+        
+        if($this->db->trans_status() === TRUE):
+            return TRUE;
+        else:
+            return FALSE;
+        endif;
     }
 }

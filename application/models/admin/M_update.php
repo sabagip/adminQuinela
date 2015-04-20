@@ -114,7 +114,9 @@ class M_update extends CI_Model{
     }
     
     function updateAgregaTrampa($idJornada, $tramposos){
-        $datos = array( 'trampaApuesta' => 1 );
+        $datos = array( 
+                        'trampaApuesta' => 1,
+                        'puntaje'       => 0);
         
         
         try{
@@ -186,6 +188,27 @@ class M_update extends CI_Model{
             return TRUE;
         } catch (Exception $ex) {
             return FALSE;
+        }
+    }
+    
+    function updatePuntajeTotal($total, $idUsuario){
+        $datos = array('puntosTotales' => $total);
+        
+        $this->db->where('idUsuario', $idUsuario);
+        $this->db->update('f1_usuario', $datos);
+    }
+    
+    function updateDesactivaUsuario($idUsuario){
+        $datos = array( 'activo' => 0);
+        
+        try{
+            $this->db->where('idUsuario' , $idUsuario);
+
+            $this->db->update('f1_usuario', $datos);
+            return true;
+        }
+        catch (Exception $e){
+            return false;
         }
     }
     

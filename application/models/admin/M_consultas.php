@@ -52,12 +52,19 @@ class M_consultas extends CI_Model{
         return $query->result();
     }
     
-    function get_userApuestaActivaPole($idJornada){
+    function get_userApuestaActivaPole($idJornada = 0, $idApuesta = 0){
         $this->db
                     ->select("idJornada, idUsuario,  idPiloto, puntaje ")
                     ->from("f1_apuesta_pole")
-                    ->where("prediccionActiva" , 1)
-                    ->where("idJornada", $idJornada);
+                    ->where("prediccionActiva" , 1);
+        
+        if($idJornada !== 0):
+            $this->db->where("idJornada", $idJornada);
+        endif;
+        
+        if($idApuesta !== 0):
+            $this->db->where("idApuestaPole", $idApuesta);
+        endif;
         
         $query = $this->db->get();
         return $query->result();
@@ -240,6 +247,49 @@ class M_consultas extends CI_Model{
                     ->where("fecha >= '" .date("Y-m-d", $fechas['fechaInicio']) ."'")
                     ->where("fecha <= '" .date("Y-m-d", $fechas['fechaFinal']) ."'")
                     ->group_by('idUsuario');
+        
+        $query = $this->db->get();
+        return $query->result();
+    }
+    
+    function get_lastRaces($idUsuario){
+        $this->db
+                ->select('jornada.fechaJornada, pista.nombre, podio.puntaje AS puntajePodio')
+                ->select('vuelta.puntaje AS puntajeVuelta, pole.puntaje AS puntajePole')
+                ->distinct()
+                ->from('f1_jornada as jornada')
+                ->join('f1_pistas AS pista', 'pista.idPista = jornada.idPista')
+                ->join('f1_apuesta_top_ten AS podio', 'podio.idJornada = jornada.idJornada')
+                ->join('f1_apuesta_pole AS pole', 'pole.idJornada = jornada.idJornada')
+                ->join('f1_apuesta_vuelta AS vuelta', 'pole.idJornada = jornada.idJornada')
+                ->where('jornada.fechaJornada < now()')
+                ->where("podio.idUsuario", $idUsuario)
+                ->where("pole.idUsuario", $idUsuario)
+                ->where("vuelta.idUsuario", $idUsuario)
+                ->where('date_format(jornada.fechaJornada, "%Y") = YEAR( NOW() )')
+                ->order_by('fechaJornada ASC');
+        
+        $query = $this->db->get();
+        //echo "<pre>"; print_r($this->db->last_query()); die;
+        return $query->result();
+    }
+    
+    function get_cuentaTrampas($idUsuario){
+        $this->db
+                    ->select('count(trampaApuesta) AS trampas')
+                    ->from('f1_apuesta_pole')
+                    ->where('idUsuario', $idUsuario)
+                    ->where('trampaApuesta', 1);
+        
+        $query = $this->db->get();
+        return $query->result();
+    }
+    
+    function get_sumaPorApuestas($idUsuario, $tabla){
+        $this->db
+                    ->select('SUM(puntaje) AS total')
+                    ->from($tabla)
+                    ->where('idUsuario', $idUsuario);
         
         $query = $this->db->get();
         return $query->result();
