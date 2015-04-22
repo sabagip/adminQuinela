@@ -5,7 +5,7 @@ class Bienvenido extends CI_Controller {
     public function __construct() {
         parent::__construct();
         // Your own constructor code
-        $this->load->library(array('session', 'grocery_CRUD'));
+        $this->load->library(array('session', 'grocery_CRUD' /*,'grocery_crud_categories'*/));
                 
         $this->load->model(array("admin/M_consultas", "admin/M_insert", "admin/M_update"));
     }
@@ -38,7 +38,9 @@ class Bienvenido extends CI_Controller {
         $crud->field_type('idPermiso','dropdown',
                                 array( "1"  => "Usuario Normal"));
         $crud->where('idPermiso', 1);
+        $crud->order_by('puntosTotales', 'ASC');
         $crud->unset_fields('fotografia', 'puntosTotales', 'facebook', 'twitter', 'google');
+        $crud->unset_delete();
         $crud->set_relation("idPais", "f1_pais", "nombre");
         
         $crud->callback_before_update(array($this, 'encriptaPassword'));
@@ -455,6 +457,7 @@ class Bienvenido extends CI_Controller {
     
     function actualizaImagenExperto($datos){
         $archivo = copy(IMGORIGTEXPERTO_URL . $datos['fotografia'], IMGDESTEXPERTO_URL . $datos['fotografia']);
+        
         if($archivo):
             echo "hecho"; 
             return true;
@@ -661,6 +664,9 @@ class Bienvenido extends CI_Controller {
     function puntuaPole($apuestas, $resultados){
         $puntajes = $this->M_consultas->get_puntaje("pole");
         foreach ($apuestas as $apuesta):
+            if($apuesta->idUsuario == ""):
+                break;
+            endif;
             if($apuesta->idPiloto == $resultados[0]->idPiloto):
                 $this->M_update->updatePuntajePole($apuesta->idUsuario, $puntajes[0]->valor);
             endif;
@@ -671,6 +677,9 @@ class Bienvenido extends CI_Controller {
         $puntajes = $this->M_consultas->get_puntaje("vueltaRapida");
         
         foreach ($apuestas as $apuesta):
+            if($apuesta->idUsuario == ""):
+                break;
+            endif;
             if($apuesta->idPiloto == $resultados[0]->idPiloto):
                 $this->M_update->updatePuntajeVuelta($apuesta->idUsuario, $puntajes[0]->valor);
             endif;
@@ -694,6 +703,9 @@ class Bienvenido extends CI_Controller {
         echo "<pre>"; print_r($resultados); echo "</pre>";
         echo "<pre>"; print_r($apuestas); die;*/
         foreach ($apuestas as $apuesta):
+            if($apuesta->idUsuario == ""):
+                break;
+            endif;
             $aciertos = 0;
             $valor = 0;
             for($x = 0; $x < 10; $x++):
@@ -790,6 +802,9 @@ class Bienvenido extends CI_Controller {
         
         $this->db->trans_start();
             foreach($usuarios as $usuario):
+                if($usuario->idUsuario == ""):
+                    break;
+                endif;
                 $puntajeTotalPole = $this->M_consultas->get_sumaPorApuestas($usuario->idUsuario, 'f1_apuesta_pole');
                 $puntajeTotalVuelta = $this->M_consultas->get_sumaPorApuestas($usuario->idUsuario, 'f1_apuesta_vuelta');
                 $puntajeTotalTopTen = $this->M_consultas->get_sumaPorApuestas($usuario->idUsuario, 'f1_apuesta_top_ten');
@@ -805,4 +820,60 @@ class Bienvenido extends CI_Controller {
             return FALSE;
         endif;
     }
+    
+    public function campeones(){
+        $crud = new Grocery_CRUD();
+        $crud->set_table("f1_apuesta_pole");
+        $crud->set_subject("Puntajes por Jornada");
+        
+        $crud->columns('idUsuario', 'idJornada', 'nombreGP', 'puntaje' );
+        
+        $crud->display_as(array(
+                                    'idUsuario' => 'Usuario',
+                                    'idJornada' =>  'id Gran Premio',
+                                    'nombreGP'  =>  'Gran Premio',
+                                    'puntaje'   =>  'Total puntos',
+        ));
+        
+        $crud->set_relation('idUsuario', 'f1_usuario', 'usuario');
+        //$crud->set_relation_n_n('tester', 'f1_jornada', 'f1_pistas', 'idJornada', 'idPista', 'nombre');
+        //$crud->set_relation('idUsuario', 'f1_apuesta_vuelta', 'idUsuario');
+        //$crud->set_relation('idUsuario', 'f1_apuesta_top_ten', 'idUsuario');
+        //$crud->set_relation('idJornada', 'f1_pistas', 'nombre');
+        $crud->callback_column('nombreGP', array($this, 'nombreGP'));
+        $crud->callback_column('puntaje', array($this, 'puntosTotalesJornada'));
+        $crud->where("activo", 1);
+        //$crud->order_by('idJornada');
+        $crud->order_by('puntaje' ,"ASC");
+        
+        $crud->unset_fields('idPiloto');
+        //echo "<pre>"; print_r($crud); die;
+        $crud->unset_add();
+        $crud->unset_edit();
+        $crud->unset_delete();
+
+        //$crud->add_action('Desactivar Usuario', IMG_URL. "prohibir.jpg", 'admin/bienvenido/desactivaUsuarios');
+
+        $output = $crud->render();
+        
+        
+        $output->body = "app/admin/index";
+        $this->load->view('includes/admin/cargaPagina', $output);
+    }
+    
+    function nombreGP($datos, $renglon){
+        $result = $this->M_consultas->get_nombrePista($renglon->idJornada);
+        return $result[0]->nombre;
+    }
+    
+    function puntosTotalesJornada($datos, $renglon){
+        //echo "<pre>"; print_r($renglon); die;
+        $pole = $this->M_consultas->sumaPuntosJornada($renglon->idUsuario, $renglon->idJornada, 'f1_apuesta_pole');
+        $vuelta = $this->M_consultas->sumaPuntosJornada($renglon->idUsuario, $renglon->idJornada, 'f1_apuesta_vuelta');
+        $top = $this->M_consultas->sumaPuntosJornada($renglon->idUsuario, $renglon->idJornada, 'f1_apuesta_top_ten');        
+        
+        $total = $pole[0]->puntaje + $vuelta[0]->puntaje + $top[0]->puntaje;
+        return (INT)$total;
+    }
+
 }

@@ -137,7 +137,6 @@ class M_update extends CI_Model{
             endforeach;
             
             $this->db->trans_complete();
-            die;
             if($this->db->trans_status() === TRUE):
                 return true;
             endif;

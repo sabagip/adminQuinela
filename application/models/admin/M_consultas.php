@@ -294,5 +294,29 @@ class M_consultas extends CI_Model{
         $query = $this->db->get();
         return $query->result();
     }
+    
+    
+    function get_nombrePista($idJornada){
+        $this->db
+                    ->select('pista.nombre')
+                    ->from('f1_jornada AS jornada')
+                    ->join('f1_pistas AS pista', 'jornada.idPista = pista.idPista' )
+                    ->where('jornada.idJornada', $idJornada);
+        
+        $query = $this->db->get();
+        return $query->result();
+    }
+    
+    function sumaPuntosJornada($idUsuario, $idJornada, $tabla){
+        $this->db
+                    ->select('puntaje')
+                    ->from($tabla)
+                    ->where('idJornada', $idJornada)
+                    ->where('idUsuario', $idUsuario);
+        
+        $query = $this->db->get();
+        return $query->result();
+    }
    
+    
 }
