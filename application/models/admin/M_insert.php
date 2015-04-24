@@ -49,6 +49,15 @@ class M_insert extends CI_Model{
         }
     }
     
+    function saveGanadorJornada($ganador){
+        try{
+            $this->db->insert('f1_ganador_jornada', $ganador);
+            return TRUE;
+        } catch (Exception $ex) {
+            return FALSE;
+        }
+    }
+    
 }
 
 ?>

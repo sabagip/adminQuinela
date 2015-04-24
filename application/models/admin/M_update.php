@@ -121,21 +121,20 @@ class M_update extends CI_Model{
         
         try{
             $this->db->trans_start();
-            foreach($tramposos as $tramposo):
-                $this->db->where("idUsuario", $tramposo->idUsuario);
-                $this->db->where("idJornada", $idJornada);
-                $this->db->update("f1_apuesta_pole", $datos);
-                
-                $this->db->where("idUsuario", $tramposo->idUsuario);
-                $this->db->where("idJornada", $idJornada);
-                $this->db->update("f1_apuesta_vuelta", $datos);
-                
-                $this->db->where("idUsuario", $tramposo->idUsuario);
-                $this->db->where("idJornada", $idJornada);
-                $this->db->update("f1_apuesta_top_ten", $datos);
-            
-            endforeach;
-            
+                foreach($tramposos as $tramposo):
+                    $this->db->where("idUsuario", $tramposo->idUsuario);
+                    $this->db->where("idJornada", $idJornada);
+                    $this->db->update("f1_apuesta_pole", $datos);
+
+                    $this->db->where("idUsuario", $tramposo->idUsuario);
+                    $this->db->where("idJornada", $idJornada);
+                    $this->db->update("f1_apuesta_vuelta", $datos);
+
+                    $this->db->where("idUsuario", $tramposo->idUsuario);
+                    $this->db->where("idJornada", $idJornada);
+                    $this->db->update("f1_apuesta_top_ten", $datos);
+
+                endforeach;
             $this->db->trans_complete();
             if($this->db->trans_status() === TRUE):
                 return true;
@@ -208,6 +207,15 @@ class M_update extends CI_Model{
         }
         catch (Exception $e){
             return false;
+        }
+    }
+    
+    function updateGanadorJornada($ganador){
+        try{
+           $this->db->update('f1_ganador_jornada', $ganador);
+           return TRUE;
+        } catch (Exception $ex) {
+            return FALSE;
         }
     }
     

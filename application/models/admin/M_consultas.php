@@ -317,6 +317,26 @@ class M_consultas extends CI_Model{
         $query = $this->db->get();
         return $query->result();
     }
+    
+    function get_usuariosPorJornada($idJornada){
+        
+        $this->db    
+                    ->select('pole.idUsuario, pole.idJornada, usuario.email, usuario.idPais')
+                    ->from('f1_apuesta_pole AS pole')
+                    ->join('f1_usuario AS usuario', 'pole.idUsuario = usuario.idUsuario')
+                    ->where('idJornada', $idJornada);
+        $query = $this->db->get();
+        return $query->result();
+    }
    
+    function get_ganadorJornada($idJornada){
+        $this->db
+                    ->select('idGanadorJornada')
+                    ->from('f1_ganador_jornada')
+                    ->where('idJornada', $idJornada);
+        
+        $query = $this->db->get();
+        return $query->result();
+    }
     
 }

@@ -606,9 +606,18 @@ class Bienvenido extends CI_Controller {
         $this->db = $this->load->database('default',true);
         $usuario = $this->M_update->updateAgregaTrampa($lastRace[0]->idJornada, $tramposos);
         if($usuario):
-            redirect( 'admin/bienvenido/verTramposos');
+            $result = $this->actualizaPuntajesTotalesTramposos($tramposos);
+            if($result):
+                redirect( 'admin/bienvenido/ganadoresPorJornada');
+            else:
+                echo "Error al actualizar los puntajes de los tramposos, volviendo a intentar";
+                sleep(3);
+                redirect( 'admin/bienvenido/agregaTrampa');
+            endif;
         else:
-            return false;
+            echo "Error al detectar a los tramposos, volviendo a intentar";
+            sleep(3);
+            redirect( 'admin/bienvenido/agregaTrampa');
         endif;
         
         //echo "<pre>"; print_r($usuario); die;
@@ -821,18 +830,43 @@ class Bienvenido extends CI_Controller {
         endif;
     }
     
+    function actualizaPuntajesTotalesTramposos($tramposos){
+        //$usuarios = $this->M_consultas->get_userApuestaActivaPole($jornada);
+        
+        $this->db->trans_start();
+            foreach($tramposos as $tramposo):
+                if($tramposo->idUsuario == ""):
+                    break;
+                endif;
+                $puntajeTotalPole = $this->M_consultas->get_sumaPorApuestas($tramposo->idUsuario, 'f1_apuesta_pole');
+                $puntajeTotalVuelta = $this->M_consultas->get_sumaPorApuestas($tramposo->idUsuario, 'f1_apuesta_vuelta');
+                $puntajeTotalTopTen = $this->M_consultas->get_sumaPorApuestas($tramposo->idUsuario, 'f1_apuesta_top_ten');
+                
+                $total = $puntajeTotalPole[0]->total + $puntajeTotalTopTen[0]->total + $puntajeTotalVuelta[0]->total;
+                $this->M_update->updatePuntajeTotal($total, $tramposo->idUsuario);
+            endforeach;
+        $this->db->trans_complete();
+        
+        if($this->db->trans_status() === TRUE):
+            return TRUE;
+        else:
+            return FALSE;
+        endif;
+    }
+    
     public function campeones(){
         $crud = new Grocery_CRUD();
-        $crud->set_table("f1_apuesta_pole");
+        $crud->set_table("f1_ganador_jornada");
         $crud->set_subject("Puntajes por Jornada");
         
-        $crud->columns('idUsuario', 'idJornada', 'nombreGP', 'puntaje' );
+        $crud->columns('idUsuario', 'idJornada', 'nombreGP', 'puntaje', 'email' );
         
         $crud->display_as(array(
                                     'idUsuario' => 'Usuario',
                                     'idJornada' =>  'id Gran Premio',
                                     'nombreGP'  =>  'Gran Premio',
                                     'puntaje'   =>  'Total puntos',
+                                    'email'     =>  'Correo Electrónico'
         ));
         
         $crud->set_relation('idUsuario', 'f1_usuario', 'usuario');
@@ -841,10 +875,8 @@ class Bienvenido extends CI_Controller {
         //$crud->set_relation('idUsuario', 'f1_apuesta_top_ten', 'idUsuario');
         //$crud->set_relation('idJornada', 'f1_pistas', 'nombre');
         $crud->callback_column('nombreGP', array($this, 'nombreGP'));
-        $crud->callback_column('puntaje', array($this, 'puntosTotalesJornada'));
-        $crud->where("activo", 1);
         //$crud->order_by('idJornada');
-        $crud->order_by('puntaje' ,"ASC");
+        $crud->order_by('idJornada' ,"DESC");
         
         $crud->unset_fields('idPiloto');
         //echo "<pre>"; print_r($crud); die;
@@ -874,6 +906,46 @@ class Bienvenido extends CI_Controller {
         
         $total = $pole[0]->puntaje + $vuelta[0]->puntaje + $top[0]->puntaje;
         return (INT)$total;
+    }
+    
+    function ganadoresPorJornada(){
+        $lastRace = $this->M_consultas->get_lastRace();
+        $idJornada = $lastRace[0]->idJornada;
+        $usuarios = $this->M_consultas->get_usuariosPorJornada($idJornada);
+        
+        if(!empty($usuarios)):
+            $tamaño = count($usuarios);
+            //echo "<pre>"; print_r($usuarios); die;
+
+            for($x = 0; $x < $tamaño; $x++):
+                if(stristr($usuarios[$x]->email, "twitter") == true):
+                    unset($usuarios[$x]);
+                endif;
+            endfor;
+
+            $datos = array();
+            foreach($usuarios as $usuario):
+                $puntaje = $this->puntosTotalesJornada($lastRace, $usuario);
+                array_push($datos, array(
+                                            'puntaje'   =>  $puntaje,
+                                            'idUsuario' =>  $usuario->idUsuario,
+                                            'idPais'    =>  $usuario->idPais,
+                                            'idJornada' =>  $idJornada,
+                                            'email'     =>  $usuario->email
+                                        )
+                );
+            endforeach;
+            rsort($datos);
+            //echo "<pre>"; print_r($datos); die;
+            $existeGanador = $this->M_consultas->get_ganadorJornada($idJornada);
+            if(empty($existeGanador)):
+                $this->M_insert->saveGanadorJornada($datos[0]);
+            else:
+                $this->M_update->updateGanadorJornada($datos[0]);
+            endif;
+        endif;
+        
+        redirect('admin/bienvenido/verTramposos');
     }
 
 }
